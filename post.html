@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MDTraj Tutorial — SequenceSpace</title>
 <link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
 <style>
   .post-header {
     padding-top: 120px;
@@ -299,34 +300,43 @@
     </p>
 
     <p>
-      In my experience, the MDTraj an MDAnalysis python packages have been immensely useful for the analysis of molecular dynamics (MD) simulations; they are highly programmable and cutomizeable. Despite this, it can be cubersome to parse through the documentation for these libraries, and dealing with large trajectories is often memory intensive. 
+      In my experience, the MDTraj an MDAnalysis python packages have been immensely useful for the analysis of molecular dynamics (MD) simulations; they are highly programmable and cutomizeable. Despite this, it can be cumbersome to parse through the documentation for these libraries, and dealing with large trajectories is often memory intensive. 
       <strong>In this tutorial, I will cover the basic methods I use to calculate per-residue RMSF and backbone RMSD in a memory-safe way that works on any personal computer.</strong>
     </p>
 
     <h2>Calculating Root Mean Square Deviation (RMSD) Using MDTraj</h2>
 
     <p>
-      The core output of AlphaFold 3 is a single predicted structure — or more precisely, a sample from an implicit distribution over structures. This is a subtle but important point. Proteins are not static objects; they breathe, flex, undergo large-scale conformational changes, and often require disorder to function.
+      RMSD is essentially a measure of the distance from a conformation of a biomolecule (e.g a protein) to some reference structure. RMSD calculations work by measuring the 3-dimensional distance between reference atoms and corresponding atoms in a particular frame of a trajectory, squaring and taking the average of these squared distances across all of the atom pairs being compared, and finally taking the square root. The function of squaring is to eliminate negative distances so as to capture movements in opposing directions as an RMSD of > 0 (i.e if one part of an object moved right, while the another part moved equivalently left from a reference, we would not want those to cancel out - eliminating signs is the function of squaring in RMSD).
     </p>
-
     <blockquote>
       "The structure is the vocabulary. The dynamics are the language."
     </blockquote>
 
     <p>
-      For well-folded globular proteins where you need a starting point for docking or mutagenesis design, AF3 is transformative. But for the approximately 30% of human proteins that are intrinsically disordered, or for understanding allosteric mechanisms, you need more than a single coordinate set.
+      This post will deal with the RMSD over time of proteins. A change in RMSD indicates a change in the conformation of a protein, and different conformations show up as stable, flat-lines on RMSD vs. time graphs. For our purposes, we compare each frame of a trajectory to the starting structure (frame = 0) as a reference to measure divergence from the starting structure over time. Thus, looking at RMSD vs. time plots will enable us to see long-term conformational changes. 
     </p>
+    <div class="callout" style="border-left-color: var(--accent);">
+      <div class="callout-label">📐 Formula</div>
+      <div style="margin-bottom: 0.6rem; color: var(--text);">Root Mean Square Deviation (RMSD)</div>
+      <div style="text-align: center; padding: 1.2rem; background: var(--bg3); border: 1px solid var(--border); margin: 0.8rem 0; color: #e8f2ff;">
+        \[ \text{RMSD}(t) = \sqrt{\frac{1}{N} \sum_{i=1}^{N} \left\| r_i(t) - r_i^{\text{ref}} \right\|^2} \]
+      </div>
+      <div style="font-size: 12px; color: var(--text-dim); line-height: 1.8;">
+        where \(N\) is the number of atoms, \(r_i(t)\) is the position of atom \(i\) at time \(t\),
+        and \(r_i^{\text{ref}}\) is its position in the reference structure.
+      </div>
+    </div>
 
+
+    <p>
+      For our purposes we will restrict the atoms being compared in the RMSD calculation to the alpha carbons of the protein backbone - amino acid side chains are flexible and move around a lot over the course of a typical MD simulation, and when looking for a change in shape within a protein what we really care about is a change in the structure of the BACKBONE of a protein. This is why it can be convenient to use solely alpha carbons for RMSD calculations.
+    </p>
     <h3>The Disorder Problem</h3>
 
     <p>
       Intrinsically disordered regions (IDRs) pose a specific challenge. AF3's pLDDT confidence score is a reasonable proxy for disorder — low pLDDT correlates with experimentally confirmed disorder — but the structural predictions themselves are not meaningful for these regions. They're essentially noise with a low confidence flag.
     </p>
-
-    <div class="callout">
-      <div class="callout-label">💡 Practical Note</div>
-      When using AF3 predictions as input to downstream analyses, always mask out residues with pLDDT &lt; 50 before computing structural features. Treating low-confidence regions as reliable structure is a common and consequential mistake.
-    </div>
 
     <h2>Running AF3 Locally: A Setup Guide</h2>
 
