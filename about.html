@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About — SequenceSpace</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  .about-layout {
+    position: relative;
+    z-index: 2;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 5rem 3rem;
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 5rem;
+    align-items: start;
+  }
+
+  .about-left { position: sticky; top: 80px; }
+
+  .avatar-box {
+    width: 100%;
+    aspect-ratio: 1;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 6rem;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 1px;
+  }
+
+  .avatar-box::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(90deg, var(--border) 1px, transparent 1px) 0 0 / 40px 40px,
+      linear-gradient(0deg, var(--border) 1px, transparent 1px) 0 0 / 40px 40px;
+    opacity: 0.4;
+  }
+
+  .avatar-box span { position: relative; z-index: 1; }
+
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-top: none;
+  }
+
+  .stat-cell {
+    background: var(--bg2);
+    padding: 1.2rem;
+    text-align: center;
+  }
+
+  .stat-num {
+    font-family: var(--serif);
+    font-size: 2rem;
+    font-weight: 600;
+    color: var(--accent);
+    display: block;
+  }
+
+  .stat-label {
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-dimmer);
+  }
+
+  .contact-links {
+    margin-top: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .contact-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    text-decoration: none;
+    font-size: 12px;
+    letter-spacing: 0.05em;
+    transition: all 0.2s;
+  }
+
+  .contact-link:hover { border-color: var(--accent); color: var(--accent); }
+
+  .contact-link .icon { font-size: 14px; }
+
+  /* ── ABOUT CONTENT ── */
+  .about-content h2 {
+    font-family: var(--serif);
+    font-size: 2.4rem;
+    font-weight: 300;
+    color: #d4e6f8;
+    line-height: 1.15;
+    margin-bottom: 2rem;
+  }
+
+  .about-content h2 em { font-style: italic; color: var(--accent2); }
+
+  .about-content h3 {
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--accent);
+    margin: 2.5rem 0 1rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .about-content h3::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  .about-content p {
+    font-size: 14px;
+    color: var(--text-dim);
+    line-height: 1.9;
+    margin-bottom: 1.2rem;
+  }
+
+  .about-content strong { color: var(--text); }
+
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 8px;
+    margin-top: 1rem;
+  }
+
+  .skill-item {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    padding: 10px 14px;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: var(--text-dim);
+    transition: all 0.2s;
+  }
+
+  .skill-item:hover { border-color: var(--accent); color: var(--accent); }
+
+  .skill-item .skill-cat {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-dimmer);
+    display: block;
+    margin-bottom: 2px;
+  }
+
+  .pub-item {
+    padding: 1.2rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .pub-item:first-child { border-top: 1px solid var(--border); }
+
+  .pub-title {
+    font-family: var(--serif);
+    font-size: 1.05rem;
+    font-weight: 300;
+    color: #d4e6f8;
+    margin-bottom: 0.3rem;
+  }
+
+  .pub-journal {
+    font-size: 11px;
+    color: var(--text-dimmer);
+    letter-spacing: 0.05em;
+  }
+
+  .pub-journal a { color: var(--accent); text-decoration: none; }
+  .pub-journal a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">sequence<span>space</span> <span style="color:var(--border-bright);">//</span></a>
+  <ul class="nav-links">
+    <li><a href="posts.html">Posts</a></li>
+    <li><a href="about.html" class="active">About</a></li>
+    <li><a href="subscribe.html">Subscribe</a></li>
+    <li><a href="https://github.com" target="_blank" style="color:var(--accent)">GitHub ↗</a></li>
+  </ul>
+</nav>
+
+<div class="page-header">
+  <div class="breadcrumb"><a href="index.html">Home</a> / About</div>
+  <h1 class="fade-up">About <em>Me</em></h1>
+  <p class="fade-up delay-1">Computational biologist, researcher, and occasional blogger. This is the longer version.</p>
+</div>
+
+<div class="genome-strip"><div class="genome-strip-inner" id="dnaStrip1"></div></div>
+
+<div class="about-layout">
+
+  <div class="about-left fade-up">
+    <div class="avatar-box"><span>🧬</span></div>
+    <div class="stat-grid">
+      <div class="stat-cell"><span class="stat-num">42</span><span class="stat-label">Posts</span></div>
+      <div class="stat-cell"><span class="stat-num">8k</span><span class="stat-label">Readers</span></div>
+      <div class="stat-cell"><span class="stat-num">5+</span><span class="stat-label">Years</span></div>
+    </div>
+    <div class="contact-links">
+      <a href="mailto:hello@example.com" class="contact-link"><span class="icon">✉</span> hello@youremail.com</a>
+      <a href="https://twitter.com" target="_blank" class="contact-link"><span class="icon">𝕏</span> @yourhandle</a>
+      <a href="https://github.com" target="_blank" class="contact-link"><span class="icon">⌥</span> github.com/yourname</a>
+      <a href="https://scholar.google.com" target="_blank" class="contact-link"><span class="icon">◈</span> Google Scholar</a>
+    </div>
+  </div>
+
+  <div class="about-content fade-up delay-1">
+    <h2>Curious about the <em>code</em> of life</h2>
+
+    <p>
+      Hi — I'm a computational biologist working at the intersection of genomics, machine learning, and evolutionary theory. I'm currently a postdoc / PhD student / researcher at [Your Institution], where I work on [your research area].
+    </p>
+
+    <p>
+      I started this blog because I was tired of the gap between how science is actually done and how it's communicated. Most biology papers are written for experts; most science blogs dumb things down too far. I'm trying to find the middle ground: <strong>technically honest, but readable by anyone who isn't afraid of a bit of math or code.</strong>
+    </p>
+
+    <h3>Research</h3>
+
+    <p>
+      My research focuses on [your specific focus]. Day-to-day that means a lot of Python, a lot of linear algebra, and periodic existential crises about whether my UMAP embeddings mean anything.
+    </p>
+
+    <p>
+      I'm particularly interested in the interpretability problem in computational biology — not just building models that predict, but understanding <em>why</em> they predict what they do and what that tells us about biology.
+    </p>
+
+    <h3>Skills & Tools</h3>
+
+    <div class="skills-grid">
+      <div class="skill-item"><span class="skill-cat">Language</span>Python</div>
+      <div class="skill-item"><span class="skill-cat">Language</span>R</div>
+      <div class="skill-item"><span class="skill-cat">ML</span>PyTorch</div>
+      <div class="skill-item"><span class="skill-cat">ML</span>JAX</div>
+      <div class="skill-item"><span class="skill-cat">Genomics</span>STAR / BWA</div>
+      <div class="skill-item"><span class="skill-cat">Genomics</span>Seurat / Scanpy</div>
+      <div class="skill-item"><span class="skill-cat">Structure</span>AlphaFold</div>
+      <div class="skill-item"><span class="skill-cat">Structure</span>PyMOL</div>
+      <div class="skill-item"><span class="skill-cat">Stats</span>Bayesian Inf.</div>
+      <div class="skill-item"><span class="skill-cat">Pipeline</span>Snakemake</div>
+      <div class="skill-item"><span class="skill-cat">Infra</span>HPC / SLURM</div>
+      <div class="skill-item"><span class="skill-cat">Infra</span>Docker</div>
+    </div>
+
+    <h3>Selected Publications</h3>
+
+    <div class="pub-item">
+      <div class="pub-title">Your Paper Title Here: A Novel Method for Something Important</div>
+      <div class="pub-journal">Nature Methods, 2024 · <a href="#">DOI →</a></div>
+    </div>
+    <div class="pub-item">
+      <div class="pub-title">Another Interesting Contribution to the Field</div>
+      <div class="pub-journal">Genome Research, 2023 · <a href="#">DOI →</a></div>
+    </div>
+    <div class="pub-item">
+      <div class="pub-title">A Third Publication You Are Proud Of</div>
+      <div class="pub-journal">PLOS Computational Biology, 2022 · <a href="#">DOI →</a></div>
+    </div>
+
+    <h3>About the Blog</h3>
+
+    <p>
+      Posts on this blog fall into a few categories: deep dives into methods and tools I use regularly, breakdowns of papers I find important or underrated, and occasional takes on where the field is heading. I try to include working code wherever it helps.
+    </p>
+
+    <p>
+      I don't have comments enabled because I don't have time to moderate them — but I genuinely love hearing from readers. Email is the best way to reach me, and I try to respond to everything.
+    </p>
+
+  </div>
+</div>
+
+<section class="newsletter">
+  <h2>Stay in the sequence</h2>
+  <p>New posts, paper breakdowns, and the occasional unpopular opinion — straight to your inbox.</p>
+  <div class="nl-form">
+    <input class="nl-input" type="email" placeholder="your@email.com">
+    <button class="nl-btn">Subscribe</button>
+  </div>
+</section>
+
+<footer>
+  <p>© 2025 SequenceSpace — Computational Biology Blog</p>
+  <div class="footer-links">
+    <a href="https://twitter.com" target="_blank">Twitter</a>
+    <a href="https://github.com" target="_blank">GitHub</a>
+    <a href="#">RSS</a>
+    <a href="about.html">Contact</a>
+  </div>
+</footer>
+
+<script src="shared.js"></script>
+<script>
+  buildDna('dnaStrip1');
+  initNewsletter();
+</script>
+</body>
+</html>

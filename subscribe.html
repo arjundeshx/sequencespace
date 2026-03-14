@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Subscribe — SequenceSpace</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  .subscribe-layout {
+    position: relative;
+    z-index: 2;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 5rem 3rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5rem;
+    align-items: start;
+  }
+
+  /* ── FORM SIDE ── */
+  .subscribe-form-box {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    padding: 2.5rem;
+  }
+
+  .form-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--text-dimmer);
+    margin-bottom: 6px;
+    display: block;
+  }
+
+  .form-input {
+    width: 100%;
+    padding: 12px 16px;
+    background: var(--bg3);
+    border: 1px solid var(--border-bright);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 13px;
+    outline: none;
+    transition: border-color 0.2s;
+    margin-bottom: 1.2rem;
+    display: block;
+  }
+
+  .form-input::placeholder { color: var(--text-dimmer); }
+  .form-input:focus { border-color: var(--accent); }
+
+  .form-check-row {
+    display: flex;
+    align-items: start;
+    gap: 10px;
+    margin-bottom: 0.8rem;
+  }
+
+  .form-check-row input[type="checkbox"] {
+    margin-top: 2px;
+    accent-color: var(--accent);
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+  }
+
+  .form-check-row label {
+    font-size: 12px;
+    color: var(--text-dim);
+    line-height: 1.5;
+    cursor: pointer;
+  }
+
+  .form-check-row label strong { color: var(--text); }
+
+  .submit-btn {
+    width: 100%;
+    padding: 14px;
+    background: var(--accent);
+    border: 1px solid var(--accent);
+    color: #080c10;
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 1.5rem;
+  }
+
+  .submit-btn:hover { background: transparent; color: var(--accent); }
+
+  .form-note {
+    font-size: 11px;
+    color: var(--text-dimmer);
+    text-align: center;
+    margin-top: 1rem;
+  }
+
+  /* ── INFO SIDE ── */
+  .subscribe-info h2 {
+    font-family: var(--serif);
+    font-size: 2.4rem;
+    font-weight: 300;
+    color: #d4e6f8;
+    line-height: 1.15;
+    margin-bottom: 1.5rem;
+  }
+
+  .subscribe-info h2 em { font-style: italic; color: var(--accent); }
+
+  .subscribe-info p {
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.9;
+    margin-bottom: 1.2rem;
+  }
+
+  .what-you-get {
+    margin-top: 2rem;
+    border: 1px solid var(--border);
+  }
+
+  .wyg-header {
+    padding: 0.8rem 1.2rem;
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--text-dimmer);
+  }
+
+  .wyg-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 1rem 1.2rem;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+
+  .wyg-item:last-child { border-bottom: none; }
+
+  .wyg-icon {
+    width: 32px;
+    height: 32px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+
+  .wyg-item strong { color: var(--text); display: block; font-size: 12px; }
+
+  .freq-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border: 1px solid var(--border-bright);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-dimmer);
+    margin-left: auto;
+    flex-shrink: 0;
+  }
+
+  /* ── TESTIMONIALS ── */
+  .testimonials {
+    position: relative;
+    z-index: 2;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 3rem 6rem;
+  }
+
+  .testimonials .section-label { margin-bottom: 2rem; }
+
+  .testi-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+
+  .testi-card {
+    background: var(--bg2);
+    padding: 1.8rem;
+  }
+
+  .testi-quote {
+    font-family: var(--serif);
+    font-size: 1rem;
+    font-weight: 300;
+    color: #c4d8f0;
+    line-height: 1.6;
+    margin-bottom: 1.2rem;
+    font-style: italic;
+  }
+
+  .testi-author { font-size: 11px; color: var(--text-dimmer); letter-spacing: 0.05em; }
+  .testi-author strong { color: var(--text-dim); display: block; }
+
+  /* success state */
+  .success-box {
+    display: none;
+    background: var(--bg3);
+    border: 1px solid var(--accent);
+    padding: 2rem;
+    text-align: center;
+    margin-top: 1rem;
+  }
+
+  .success-box .big { font-size: 2.5rem; margin-bottom: 0.5rem; }
+  .success-box h3 { font-family: var(--serif); font-weight: 300; color: var(--accent); font-size: 1.4rem; margin-bottom: 0.5rem; }
+  .success-box p { font-size: 12px; color: var(--text-dim); }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">sequence<span>space</span> <span style="color:var(--border-bright);">//</span></a>
+  <ul class="nav-links">
+    <li><a href="posts.html">Posts</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="subscribe.html" class="active">Subscribe</a></li>
+    <li><a href="https://github.com" target="_blank" style="color:var(--accent)">GitHub ↗</a></li>
+  </ul>
+</nav>
+
+<div class="page-header">
+  <div class="breadcrumb"><a href="index.html">Home</a> / Subscribe</div>
+  <h1 class="fade-up">Stay in the <em>Sequence</em></h1>
+  <p class="fade-up delay-1">No spam. No vendor pitches. Just science, code, and the occasional strong opinion.</p>
+</div>
+
+<div class="genome-strip"><div class="genome-strip-inner" id="dnaStrip1"></div></div>
+
+<div class="subscribe-layout">
+
+  <!-- FORM -->
+  <div class="fade-up">
+    <div class="subscribe-form-box" id="formBox">
+      <div style="margin-bottom:1.5rem;">
+        <span class="form-label">Name (optional)</span>
+        <input class="form-input" type="text" id="nameInput" placeholder="Ada Lovelace">
+      </div>
+      <div style="margin-bottom:1.5rem;">
+        <span class="form-label">Email address *</span>
+        <input class="form-input" type="email" id="emailInput" placeholder="you@university.edu">
+      </div>
+
+      <span class="form-label" style="margin-bottom:1rem;">What to send you</span>
+
+      <div class="form-check-row">
+        <input type="checkbox" id="chk1" checked>
+        <label for="chk1"><strong>New posts</strong> — every new article as it's published</label>
+      </div>
+      <div class="form-check-row">
+        <input type="checkbox" id="chk2" checked>
+        <label for="chk2"><strong>Monthly digest</strong> — a curated roundup of the best papers and tools I've encountered</label>
+      </div>
+      <div class="form-check-row">
+        <input type="checkbox" id="chk3">
+        <label for="chk3"><strong>Code releases</strong> — when I release a new tool or notebook</label>
+      </div>
+
+      <button class="submit-btn" id="subBtn" onclick="handleSubscribe()">Subscribe →</button>
+      <p class="form-note">Unsubscribe at any time. No third parties. Ever.</p>
+    </div>
+
+    <div class="success-box" id="successBox">
+      <div class="big">🧬</div>
+      <h3>You're in the sequence.</h3>
+      <p>Check your inbox to confirm your subscription. First post incoming soon.</p>
+    </div>
+  </div>
+
+  <!-- INFO -->
+  <div class="subscribe-info fade-up delay-1">
+    <h2>Science writing that<br>doesn't <em>dumb it down</em></h2>
+    <p>
+      This is a blog for people who want to actually understand what's happening in computational biology — not just the headline findings, but the methods, the caveats, and the implications.
+    </p>
+    <p>
+      I write because I believe the most interesting ideas in biology right now are sitting at the intersection with machine learning and statistics — and most researchers on either side of that boundary aren't fully fluent in the other's language.
+    </p>
+
+    <div class="what-you-get">
+      <div class="wyg-header">What You'll Receive</div>
+      <div class="wyg-item">
+        <div class="wyg-icon">📄</div>
+        <div>
+          <strong>In-depth posts</strong>
+          Tutorials, paper breakdowns, and original analysis
+        </div>
+        <span class="freq-badge">1–2/month</span>
+      </div>
+      <div class="wyg-item">
+        <div class="wyg-icon">📦</div>
+        <div>
+          <strong>Monthly digest</strong>
+          Best papers, tools, and threads I've bookmarked
+        </div>
+        <span class="freq-badge">1/month</span>
+      </div>
+      <div class="wyg-item">
+        <div class="wyg-icon">⌥</div>
+        <div>
+          <strong>Code & notebooks</strong>
+          Reproducible pipelines and worked examples
+        </div>
+        <span class="freq-badge">Occasional</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- READER QUOTES -->
+<div class="testimonials">
+  <div class="section-label"><span>Readers</span> Say</div>
+  <div class="testi-grid">
+    <div class="testi-card">
+      <div class="testi-quote">"The most technically honest science blog I've found. Actually explains the math instead of hand-waving it away."</div>
+      <div class="testi-author"><strong>ML researcher, Stanford</strong>migrating into comp bio</div>
+    </div>
+    <div class="testi-card">
+      <div class="testi-quote">"I'm a wet lab biologist learning to code, and these posts are pitched exactly at the right level. Challenging but not alienating."</div>
+      <div class="testi-author"><strong>PhD student, Wellcome Sanger</strong>genomics lab</div>
+    </div>
+    <div class="testi-card">
+      <div class="testi-quote">"The AlphaFold breakdown is the clearest explanation of what AF3 can and can't do that I've read anywhere."</div>
+      <div class="testi-author"><strong>Principal scientist, pharma</strong>structural biology</div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <p>© 2025 SequenceSpace — Computational Biology Blog</p>
+  <div class="footer-links">
+    <a href="https://twitter.com" target="_blank">Twitter</a>
+    <a href="https://github.com" target="_blank">GitHub</a>
+    <a href="#">RSS</a>
+    <a href="about.html">Contact</a>
+  </div>
+</footer>
+
+<script src="shared.js"></script>
+<script>
+  buildDna('dnaStrip1');
+
+  function handleSubscribe() {
+    const email = document.getElementById('emailInput').value;
+    if (!email.includes('@')) {
+      document.getElementById('emailInput').style.borderColor = 'var(--accent3)';
+      document.getElementById('emailInput').placeholder = 'Please enter a valid email';
+      document.getElementById('emailInput').value = '';
+      return;
+    }
+    document.getElementById('formBox').style.display = 'none';
+    document.getElementById('successBox').style.display = 'block';
+  }
+</script>
+</body>
+</html>

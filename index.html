@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SequenceSpace — Computational Biology</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  /* ── HERO ── */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding: 0 3rem;
+    overflow: hidden;
+  }
+
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 70% 50%, rgba(0,144,255,0.04) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 40% at 30% 60%, rgba(0,212,168,0.05) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .hero-grid {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(90deg, var(--border) 1px, transparent 1px) 0 0 / 60px 60px,
+      linear-gradient(0deg, var(--border) 1px, transparent 1px) 0 0 / 60px 60px;
+    opacity: 0.25;
+    pointer-events: none;
+  }
+
+  .hero-inner {
+    position: relative;
+    z-index: 2;
+    max-width: 860px;
+  }
+
+  .hero-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 2rem;
+  }
+
+  .hero-tag::before {
+    content: '';
+    display: inline-block;
+    width: 24px;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  .hero h1 {
+    font-family: var(--serif);
+    font-size: clamp(3rem, 7vw, 6rem);
+    font-weight: 300;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: #e8f2ff;
+    margin-bottom: 1.5rem;
+  }
+
+  .hero h1 em { font-style: italic; color: var(--accent); }
+
+  .hero-desc {
+    font-size: 14px;
+    color: var(--text-dim);
+    max-width: 520px;
+    line-height: 1.8;
+    margin-bottom: 2.5rem;
+  }
+
+  .hero-cta { display: flex; gap: 1rem; }
+
+  /* ── POSTS GRID ── */
+  .posts-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+
+  .post-card {
+    background: var(--bg2);
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    transition: background 0.2s;
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  .post-card:hover { background: var(--bg3); }
+  .post-card:hover .post-title { color: var(--accent); }
+
+  .post-title {
+    font-family: var(--serif);
+    font-size: 1.35rem;
+    font-weight: 300;
+    line-height: 1.3;
+    color: #d4e6f8;
+    transition: color 0.2s;
+  }
+
+  .post-excerpt {
+    font-size: 12px;
+    color: var(--text-dim);
+    line-height: 1.7;
+    flex: 1;
+  }
+
+  .post-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--text-dimmer);
+    letter-spacing: 0.05em;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .post-card-featured {
+    grid-column: span 2;
+    background: var(--bg3);
+    border-left: 3px solid var(--accent);
+  }
+
+  .post-card-featured .post-title { font-size: 1.9rem; }
+
+  /* ── ABOUT TEASER ── */
+  .about-teaser {
+    position: relative;
+    z-index: 2;
+    background: var(--bg2);
+    border-top: 1px solid var(--border);
+  }
+
+  .about-teaser-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 5rem 3rem;
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 4rem;
+    align-items: center;
+  }
+
+  .teaser-label {
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-dimmer);
+    margin-bottom: 1rem;
+  }
+
+  .teaser-label span { color: var(--accent2); }
+
+  .teaser-visual {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 180px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    font-size: 5rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .teaser-visual::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(90deg, var(--border) 1px, transparent 1px) 0 0 / 30px 30px,
+      linear-gradient(0deg, var(--border) 1px, transparent 1px) 0 0 / 30px 30px;
+    opacity: 0.5;
+  }
+
+  .teaser-visual span { position: relative; z-index: 1; }
+
+  .teaser-content h2 {
+    font-family: var(--serif);
+    font-size: 2.2rem;
+    font-weight: 300;
+    color: #d4e6f8;
+    margin-bottom: 1rem;
+    line-height: 1.2;
+  }
+
+  .teaser-content h2 em { font-style: italic; color: var(--accent2); }
+
+  .teaser-content p {
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.9;
+    margin-bottom: 1.5rem;
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">sequence<span>space</span> <span style="color:var(--border-bright);">//</span></a>
+  <ul class="nav-links">
+    <li><a href="posts.html">Posts</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="subscribe.html">Subscribe</a></li>
+    <li><a href="https://github.com" target="_blank" style="color:var(--accent)">GitHub ↗</a></li>
+  </ul>
+</nav>
+
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-inner">
+    <div class="hero-tag fade-up">Computational Biology · Research Blog</div>
+    <h1 class="fade-up delay-1">Where <em>biology</em><br>meets the machine<span class="cursor"></span></h1>
+    <p class="hero-desc fade-up delay-2">
+      Exploring the intersection of genomics, machine learning, and evolutionary theory — one sequence at a time. Deep dives, paper breakdowns, and original research.
+    </p>
+    <div class="hero-cta fade-up delay-3">
+      <a href="posts.html" class="btn btn-primary">Read Latest →</a>
+      <a href="subscribe.html" class="btn btn-ghost">Subscribe to Updates</a>
+    </div>
+  </div>
+</section>
+
+<div class="genome-strip"><div class="genome-strip-inner" id="dnaStrip1"></div></div>
+
+<!-- FEATURED POSTS -->
+<div class="section" id="posts">
+  <div class="section-label"><span>01</span> Featured Posts</div>
+  <div class="posts-grid">
+
+    <a href="post.html" class="post-card post-card-featured">
+      <div><span class="post-tag tag-ml">Machine Learning</span></div>
+      <div class="post-title">StudyFormer - A Multi-View ViT-Based Model That Thinks Like a Radiologist</div>
+      <div class="post-excerpt">The diagnosis of X-ray abnormalities requires radiologists to look at multiple radiographic views and consider 3D relationships - this model does the same.</div>
+      <div class="post-meta"><span>Mar 14, 2026</span><span>12 min read</span></div>
+    </a>
+
+    <a href="post.html" class="post-card">
+      <div><span class="post-tag tag-genomics">Genomics</span></div>
+      <div class="post-title">ATAC-seq at Single-Cell Resolution: A Practical Guide</div>
+      <div class="post-excerpt">A walkthrough of my chromatin accessibility pipeline — from raw FASTQ to cell-type-specific regulatory peaks.</div>
+      <div class="post-meta"><span>Feb 28, 2025</span><span>8 min read</span></div>
+    </a>
+
+    <a href="post.html" class="post-card">
+      <div><span class="post-tag tag-evolution">Evolution</span></div>
+      <div class="post-title">Neutral Theory Revisited: Does Drift Still Matter in the Age of Big Data?</div>
+      <div class="post-excerpt">Population geneticists are arguing again. Here's where I stand on the selectionist vs. neutralist debate after 50 years.</div>
+      <div class="post-meta"><span>Feb 14, 2025</span><span>10 min read</span></div>
+    </a>
+
+    <a href="post.html" class="post-card">
+      <div><span class="post-tag tag-ml">Deep Learning</span></div>
+      <div class="post-title">Sequence-to-Function with Transformers: Lessons from ESM-2</div>
+      <div class="post-excerpt">How large language model architectures are reshaping our understanding of protein sequence space.</div>
+      <div class="post-meta"><span>Jan 30, 2025</span><span>9 min read</span></div>
+    </a>
+
+    <a href="post.html" class="post-card">
+      <div><span class="post-tag tag-proteomics">Proteomics</span></div>
+      <div class="post-title">Building a Mass Spec Data Pipeline in Python</div>
+      <div class="post-excerpt">A reproducible workflow for label-free quantification using pyteomics, pandas, and a pinch of patience.</div>
+      <div class="post-meta"><span>Jan 15, 2025</span><span>15 min read</span></div>
+    </a>
+
+    <a href="post.html" class="post-card">
+      <div><span class="post-tag tag-genomics">Genomics</span></div>
+      <div class="post-title">Graph Genomes: Why Linear Reference is Holding Us Back</div>
+      <div class="post-excerpt">Pangenomes and variation graphs are no longer theoretical — and they're changing alignment fundamentally.</div>
+      <div class="post-meta"><span>Jan 3, 2025</span><span>7 min read</span></div>
+    </a>
+
+  </div>
+
+  <div style="text-align:center; margin-top:2.5rem;">
+    <a href="posts.html" class="btn btn-ghost">View All Posts →</a>
+  </div>
+</div>
+
+<div class="genome-strip"><div class="genome-strip-inner" id="dnaStrip2"></div></div>
+
+<!-- ABOUT TEASER -->
+<div class="about-teaser">
+  <div class="about-teaser-inner">
+    <div>
+      <div class="teaser-label"><span>02</span> About the Author</div>
+      <div class="teaser-visual"><span>🧬</span></div>
+    </div>
+    <div class="teaser-content">
+      <h2>Curious about the <em>code</em> of life</h2>
+      <p>
+        A computational biologist working at the intersection of genomics, machine learning, and evolutionary biology. This blog exists because science communication shouldn't be dumbed down — if you can handle a for-loop, you can handle a likelihood ratio.
+      </p>
+      <a href="about.html" class="btn btn-ghost">Read More About Me →</a>
+    </div>
+  </div>
+</div>
+
+<!-- NEWSLETTER -->
+<section class="newsletter">
+  <h2>Stay in the sequence</h2>
+  <p>New posts, paper breakdowns, and the occasional unpopular opinion — straight to your inbox.</p>
+  <div class="nl-form">
+    <input class="nl-input" type="email" placeholder="your@email.com">
+    <button class="nl-btn">Subscribe</button>
+  </div>
+</section>
+
+<footer>
+  <p>© 2025 SequenceSpace — Computational Biology Blog</p>
+  <div class="footer-links">
+    <a href="https://twitter.com" target="_blank">Twitter</a>
+    <a href="https://github.com" target="_blank">GitHub</a>
+    <a href="#">RSS</a>
+    <a href="about.html">Contact</a>
+  </div>
+</footer>
+
+<script src="shared.js"></script>
+<script>
+  buildDna('dnaStrip1');
+  buildDna('dnaStrip2');
+  initCardGlow('.post-card');
+  initNewsletter();
+</script>
+</body>
+</html>

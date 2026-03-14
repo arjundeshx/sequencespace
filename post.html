@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AlphaFold 3 — SequenceSpace</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  .post-header {
+    padding-top: 120px;
+    padding-bottom: 4rem;
+    padding-left: 3rem;
+    padding-right: 3rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 2;
+    border-bottom: 1px solid var(--border);
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 4rem;
+    align-items: end;
+  }
+
+  .post-header .breadcrumb {
+    font-size: 11px;
+    color: var(--text-dimmer);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: 1.5rem;
+  }
+  .post-header .breadcrumb a { color: var(--accent); text-decoration: none; }
+
+  .post-header h1 {
+    font-family: var(--serif);
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    font-weight: 300;
+    line-height: 1.1;
+    color: #e8f2ff;
+    margin-bottom: 1.5rem;
+  }
+
+  .post-header h1 em { font-style: italic; color: var(--accent); }
+
+  .post-header .lead {
+    font-size: 15px;
+    color: var(--text-dim);
+    line-height: 1.8;
+    max-width: 620px;
+  }
+
+  .post-meta-block {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    padding: 1.5rem;
+    font-size: 12px;
+  }
+
+  .meta-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .meta-row:last-child { border-bottom: none; }
+  .meta-row .key { color: var(--text-dimmer); text-transform: uppercase; letter-spacing: 0.1em; font-size: 10px; }
+  .meta-row .val { color: var(--text); }
+
+  /* ── ARTICLE BODY ── */
+  .article-layout {
+    position: relative;
+    z-index: 2;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 5rem 3rem;
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 5rem;
+    align-items: start;
+  }
+
+  .article-body {
+    font-size: 15px;
+    line-height: 1.9;
+    color: var(--text);
+  }
+
+  .article-body h2 {
+    font-family: var(--serif);
+    font-size: 1.9rem;
+    font-weight: 300;
+    color: #e8f2ff;
+    margin: 3rem 0 1rem;
+    line-height: 1.2;
+  }
+
+  .article-body h3 {
+    font-family: var(--mono);
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    margin: 2rem 0 0.8rem;
+  }
+
+  .article-body p { margin-bottom: 1.4rem; color: var(--text-dim); }
+  .article-body p strong { color: var(--text); font-weight: 700; }
+
+  .article-body a { color: var(--accent); text-decoration: none; border-bottom: 1px solid rgba(0,212,168,0.3); }
+  .article-body a:hover { border-color: var(--accent); }
+
+  .article-body blockquote {
+    border-left: 3px solid var(--accent);
+    padding: 1rem 1.5rem;
+    margin: 2rem 0;
+    background: var(--bg2);
+    color: var(--text);
+    font-style: italic;
+  }
+
+  .article-body pre {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    padding: 1.5rem;
+    overflow-x: auto;
+    margin: 1.5rem 0;
+    font-size: 12px;
+    line-height: 1.6;
+  }
+
+  .article-body code {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    padding: 2px 6px;
+    font-size: 12px;
+    color: var(--accent2);
+  }
+
+  .article-body pre code {
+    background: none;
+    border: none;
+    padding: 0;
+    color: var(--text);
+  }
+
+  .kw { color: var(--accent2); }
+  .str { color: var(--accent); }
+  .cm { color: var(--text-dimmer); }
+  .fn { color: var(--highlight); }
+
+  .article-body .callout {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent2);
+    padding: 1.2rem 1.5rem;
+    margin: 2rem 0;
+    font-size: 13px;
+  }
+
+  .callout-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--accent2);
+    margin-bottom: 0.4rem;
+  }
+
+  /* ── SIDEBAR ── */
+  .article-sidebar { position: sticky; top: 80px; }
+
+  .sidebar-box {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .sidebar-box h4 {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--text-dimmer);
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .toc-list { list-style: none; }
+  .toc-list li { margin-bottom: 0.5rem; }
+  .toc-list a {
+    font-size: 12px;
+    color: var(--text-dim);
+    text-decoration: none;
+    transition: color 0.2s;
+    display: block;
+    padding: 2px 0;
+  }
+  .toc-list a:hover { color: var(--accent); }
+
+  .related-post {
+    display: block;
+    text-decoration: none;
+    padding: 0.8rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .related-post:last-child { border-bottom: none; }
+
+  .related-post .rp-title {
+    font-family: var(--serif);
+    font-size: 0.95rem;
+    font-weight: 300;
+    color: var(--text);
+    margin-bottom: 4px;
+    line-height: 1.3;
+    transition: color 0.2s;
+  }
+  .related-post:hover .rp-title { color: var(--accent); }
+  .related-post .rp-date { font-size: 11px; color: var(--text-dimmer); }
+
+  /* ── POST NAV ── */
+  .post-nav {
+    position: relative;
+    z-index: 2;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 3rem 6rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+
+  .post-nav-card {
+    background: var(--bg2);
+    padding: 2rem;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .post-nav-card:hover { background: var(--bg3); }
+  .post-nav-card:hover .pnc-title { color: var(--accent); }
+
+  .pnc-dir {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--text-dimmer);
+    margin-bottom: 0.5rem;
+  }
+
+  .pnc-title {
+    font-family: var(--serif);
+    font-size: 1.1rem;
+    font-weight: 300;
+    color: #d4e6f8;
+    line-height: 1.3;
+    transition: color 0.2s;
+  }
+
+  .post-nav-card.next { text-align: right; }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">sequence<span>space</span> <span style="color:var(--border-bright);">//</span></a>
+  <ul class="nav-links">
+    <li><a href="posts.html" class="active">Posts</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="subscribe.html">Subscribe</a></li>
+    <li><a href="https://github.com" target="_blank" style="color:var(--accent)">GitHub ↗</a></li>
+  </ul>
+</nav>
+
+<div class="post-header">
+  <div>
+    <div class="breadcrumb"><a href="index.html">Home</a> / <a href="posts.html">Posts</a> / Machine Learning</div>
+    <div style="margin-bottom:1rem;"><span class="post-tag tag-ml">Machine Learning</span></div>
+    <h1 class="fade-up">AlphaFold 3 and the End of the Protein Folding Problem — <em>Or Just the Beginning?</em></h1>
+    <p class="lead fade-up delay-1">We may have cracked folding, but the proteome is not just a collection of static structures. Dynamics, disorder, and interactions remain a vast frontier.</p>
+  </div>
+  <div class="post-meta-block fade-up delay-2">
+    <div class="meta-row"><span class="key">Date</span><span class="val">Mar 10, 2025</span></div>
+    <div class="meta-row"><span class="key">Read time</span><span class="val">12 min</span></div>
+    <div class="meta-row"><span class="key">Topic</span><span class="val">Machine Learning</span></div>
+    <div class="meta-row"><span class="key">Code</span><span class="val"><a href="https://github.com" style="color:var(--accent);text-decoration:none;">GitHub ↗</a></span></div>
+  </div>
+</div>
+
+<div class="genome-strip"><div class="genome-strip-inner" id="dnaStrip1"></div></div>
+
+<div class="article-layout">
+  <article class="article-body">
+
+    <p>
+      When DeepMind released AlphaFold 2 in 2020, the structural biology community collectively exhaled. A problem that had sat on the CASP leaderboard for three decades — predicting a protein's 3D structure from its amino acid sequence — had been, for most practical purposes, solved. The 2024 Nobel Prize in Chemistry made that official.
+    </p>
+
+    <p>
+      AlphaFold 3 pushed further: multimers, nucleic acids, small molecule ligands, covalent modifications. The scope is genuinely breathtaking. But as I've spent the last few months integrating AF3 predictions into an actual drug discovery pipeline, I've developed a more complicated view. <strong>We haven't solved structural biology. We've solved one very important subproblem of it.</strong>
+    </p>
+
+    <h2>What AF3 Actually Does (and Doesn't Do)</h2>
+
+    <p>
+      The core output of AlphaFold 3 is a single predicted structure — or more precisely, a sample from an implicit distribution over structures. This is a subtle but important point. Proteins are not static objects; they breathe, flex, undergo large-scale conformational changes, and often require disorder to function.
+    </p>
+
+    <blockquote>
+      "The structure is the vocabulary. The dynamics are the language."
+    </blockquote>
+
+    <p>
+      For well-folded globular proteins where you need a starting point for docking or mutagenesis design, AF3 is transformative. But for the approximately 30% of human proteins that are intrinsically disordered, or for understanding allosteric mechanisms, you need more than a single coordinate set.
+    </p>
+
+    <h3>The Disorder Problem</h3>
+
+    <p>
+      Intrinsically disordered regions (IDRs) pose a specific challenge. AF3's pLDDT confidence score is a reasonable proxy for disorder — low pLDDT correlates with experimentally confirmed disorder — but the structural predictions themselves are not meaningful for these regions. They're essentially noise with a low confidence flag.
+    </p>
+
+    <div class="callout">
+      <div class="callout-label">💡 Practical Note</div>
+      When using AF3 predictions as input to downstream analyses, always mask out residues with pLDDT &lt; 50 before computing structural features. Treating low-confidence regions as reliable structure is a common and consequential mistake.
+    </div>
+
+    <h2>Running AF3 Locally: A Setup Guide</h2>
+
+    <p>
+      The open-weight AF3 release requires some setup. Here's the pipeline I use for batch predictions on a protein family of interest:
+    </p>
+
+<pre><code><span class="cm"># Install af3 and dependencies</span>
+<span class="cm"># Requires CUDA 12+, ~2TB storage for databases</span>
+
+<span class="kw">import</span> json
+<span class="kw">from</span> pathlib <span class="kw">import</span> Path
+<span class="kw">from</span> alphafold3 <span class="kw">import</span> run_inference
+
+<span class="cm"># Build input JSON for a protein of interest</span>
+<span class="kw">def</span> <span class="fn">make_af3_input</span>(name: str, sequence: str) -> dict:
+    <span class="kw">return</span> {
+        <span class="str">"name"</span>: name,
+        <span class="str">"sequences"</span>: [{
+            <span class="str">"protein"</span>: {
+                <span class="str">"id"</span>: <span class="str">"A"</span>,
+                <span class="str">"sequence"</span>: sequence
+            }
+        }],
+        <span class="str">"modelSeeds"</span>: [<span class="str">"42"</span>, <span class="str">"137"</span>, <span class="str">"999"</span>],  <span class="cm"># multiple seeds = ensemble</span>
+        <span class="str">"dialect"</span>: <span class="str">"alphafold3"</span>,
+        <span class="str">"version"</span>: 1
+    }
+
+sequences = {
+    <span class="str">"TP53_human"</span>: <span class="str">"MEEPQSDPSVEPPLSQETFSDLWKLLPENNVLSPLPSQAMDDLMLSPDDIEQWFTEDP..."</span>,
+    <span class="str">"PCNA_human"</span>:  <span class="str">"MFEARLVQGSILKKVLEALKDLINEACWDISSSGVNLQSMDSSHVSLVQLTLRSEGFDF..."</span>
+}
+
+<span class="kw">for</span> name, seq <span class="kw">in</span> sequences.items():
+    inp = make_af3_input(name, seq)
+    Path(<span class="fn">f</span><span class="str">"/data/af3_inputs/{name}.json"</span>).write_text(json.dumps(inp))
+</code></pre>
+
+    <h2>What Comes After Structure?</h2>
+
+    <p>
+      The most exciting frontier, in my view, is not better static structure prediction — it's using predicted structures as priors for dynamic simulation. Tools like OpenMM and GROMACS can now be seeded with AF3 coordinates to run molecular dynamics, and the combination is genuinely powerful.
+    </p>
+
+    <p>
+      There's also a growing ecosystem of structure-aware machine learning models — GVP, EquiFold, and others — that take structural representations as input and predict function, binding affinity, or mutational effects. The bottleneck is no longer getting structures; it's knowing what to do with them.
+    </p>
+
+    <h3>My Current Workflow</h3>
+
+    <p>
+      For a recent project predicting the effect of point mutations on binding stability, my pipeline looked like this: AF3 prediction → ensemble generation with 5 random seeds → per-residue confidence filtering → Rosetta ddG calculation → ESM-1v zero-shot mutant scoring → ensemble averaging. The combination outperformed any single method.
+    </p>
+
+    <h2>Conclusion</h2>
+
+    <p>
+      AlphaFold 3 is a genuinely transformative tool. But transformative tools don't end fields — they open new ones. The protein folding problem, narrowly defined, is largely solved. The problems of protein dynamics, disorder, and function remain wide open.
+    </p>
+
+    <p>
+      If you're a computationalist just getting into structural biology, this is an exciting time. The infrastructure is finally good enough that you can ask biological questions rather than engineering questions. Don't waste that by treating AF3 as an oracle.
+    </p>
+
+  </article>
+
+  <aside class="article-sidebar">
+    <div class="sidebar-box">
+      <h4>Table of Contents</h4>
+      <ul class="toc-list">
+        <li><a href="#">What AF3 Actually Does</a></li>
+        <li><a href="#">The Disorder Problem</a></li>
+        <li><a href="#">Running AF3 Locally</a></li>
+        <li><a href="#">What Comes After Structure?</a></li>
+        <li><a href="#">Conclusion</a></li>
+      </ul>
+    </div>
+
+    <div class="sidebar-box">
+      <h4>Related Posts</h4>
+      <a href="post.html" class="related-post">
+        <div class="rp-title">Sequence-to-Function with Transformers: Lessons from ESM-2</div>
+        <div class="rp-date">Jan 30, 2025</div>
+      </a>
+      <a href="post.html" class="related-post">
+        <div class="rp-title">Cryo-EM at 1 Å: The Resolution Revolution Is Ongoing</div>
+        <div class="rp-date">Nov 7, 2024</div>
+      </a>
+      <a href="post.html" class="related-post">
+        <div class="rp-title">Building a Mass Spec Pipeline in Python</div>
+        <div class="rp-date">Jan 15, 2025</div>
+      </a>
+    </div>
+
+    <div class="sidebar-box">
+      <h4>Newsletter</h4>
+      <p style="font-size:12px; color:var(--text-dim); margin-bottom:1rem;">Get posts like this in your inbox.</p>
+      <div style="display:flex; flex-direction:column; gap:8px;">
+        <input class="nl-input" type="email" placeholder="your@email.com" style="border-right:1px solid var(--border-bright); padding:10px 14px;">
+        <button class="nl-btn" style="width:100%;">Subscribe</button>
+      </div>
+    </div>
+  </aside>
+</div>
+
+<div class="post-nav">
+  <a href="post.html" class="post-nav-card prev">
+    <div class="pnc-dir">← Previous</div>
+    <div class="pnc-title">Neutral Theory Revisited: Does Drift Still Matter in the Age of Big Data?</div>
+  </a>
+  <a href="post.html" class="post-nav-card next">
+    <div class="pnc-dir">Next →</div>
+    <div class="pnc-title">ATAC-seq at Single-Cell Resolution: A Practical Guide</div>
+  </a>
+</div>
+
+<footer>
+  <p>© 2025 SequenceSpace — Computational Biology Blog</p>
+  <div class="footer-links">
+    <a href="https://twitter.com" target="_blank">Twitter</a>
+    <a href="https://github.com" target="_blank">GitHub</a>
+    <a href="#">RSS</a>
+    <a href="about.html">Contact</a>
+  </div>
+</footer>
+
+<script src="shared.js"></script>
+<script>
+  buildDna('dnaStrip1');
+  initNewsletter();
+</script>
+</body>
+</html>
