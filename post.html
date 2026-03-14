@@ -282,9 +282,9 @@
     <p class="lead fade-up delay-1">A basic simulation post-processing walkthrough to help you handle large trajectories using MDTraj and MDAnalysis, two widely used frameworks for analyzing molecular dynamics simulations.</p>
   </div>
   <div class="post-meta-block fade-up delay-2">
-    <div class="meta-row"><span class="key">Date</span><span class="val">Mar 10, 2025</span></div>
-    <div class="meta-row"><span class="key">Read time</span><span class="val">12 min</span></div>
-    <div class="meta-row"><span class="key">Topic</span><span class="val">Machine Learning</span></div>
+    <div class="meta-row"><span class="key">Date</span><span class="val">Mar 14, 2026</span></div>
+    <div class="meta-row"><span class="key">Read time</span><span class="val">10 min</span></div>
+    <div class="meta-row"><span class="key">Topic</span><span class="val">Structural Biology</span></div>
     <div class="meta-row"><span class="key">Code</span><span class="val"><a href="https://github.com" style="color:var(--accent);text-decoration:none;">GitHub ↗</a></span></div>
   </div>
 </div>
@@ -295,14 +295,15 @@
   <article class="article-body">
 
     <p>
-      When DeepMind released AlphaFold 2 in 2020, the structural biology community collectively exhaled. A problem that had sat on the CASP leaderboard for three decades — predicting a protein's 3D structure from its amino acid sequence — had been, for most practical purposes, solved. The 2024 Nobel Prize in Chemistry made that official.
+      When analyzing large molecular dynamics (MD) trajectories, it can be difficult to make sense of the data. The easiest and simplest ways to get started analyzing and comparing the movement of proteins is by generating plots for root mean square deviation (RMSD) and per-residue root mean sequare fluctuation (RMSF).
     </p>
 
     <p>
-      AlphaFold 3 pushed further: multimers, nucleic acids, small molecule ligands, covalent modifications. The scope is genuinely breathtaking. But as I've spent the last few months integrating AF3 predictions into an actual drug discovery pipeline, I've developed a more complicated view. <strong>We haven't solved structural biology. We've solved one very important subproblem of it.</strong>
+      In my experience, the MDTraj an MDAnalysis python packages have been immensely useful for the analysis of molecular dynamics (MD) simulations; they are highly programmable and cutomizeable. Despite this, it can be cubersome to parse through the documentation for these libraries, and dealing with large trajectories is often memory intensive. 
+      <strong>In this tutorial, I will cover the basic methods I use to calculate per-residue RMSF and backbone RMSD in a memory-safe way that works on any personal computer.</strong>
     </p>
 
-    <h2>What AF3 Actually Does (and Doesn't Do)</h2>
+    <h2>Calculating Root Mean Square Deviation (RMSD) Using MDTraj</h2>
 
     <p>
       The core output of AlphaFold 3 is a single predicted structure — or more precisely, a sample from an implicit distribution over structures. This is a subtle but important point. Proteins are not static objects; they breathe, flex, undergo large-scale conformational changes, and often require disorder to function.
