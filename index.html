@@ -10,7 +10,8 @@
   .hero {
     position: relative;
     min-height: 100vh;
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     align-items: center;
     padding: 0 3rem;
     overflow: hidden;
@@ -38,7 +39,6 @@
   .hero-inner {
     position: relative;
     z-index: 2;
-    max-width: 860px;
   }
 
   .hero-tag {
@@ -62,7 +62,7 @@
 
   .hero h1 {
     font-family: var(--serif);
-    font-size: clamp(3rem, 7vw, 6rem);
+    font-size: clamp(2.6rem, 5vw, 5rem);
     font-weight: 300;
     line-height: 1.05;
     letter-spacing: -0.02em;
@@ -75,12 +75,206 @@
   .hero-desc {
     font-size: 14px;
     color: var(--text-dim);
-    max-width: 520px;
+    max-width: 480px;
     line-height: 1.8;
     margin-bottom: 2.5rem;
   }
 
   .hero-cta { display: flex; gap: 1rem; }
+
+  /* ── SEQUENCE ALIGNMENT VISUAL ── */
+  .hero-visual {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+  }
+
+  .alignment-widget {
+    width: 100%;
+    max-width: 520px;
+    opacity: 0;
+    animation: alignFadeIn 1.2s 0.5s ease forwards;
+  }
+
+  @keyframes alignFadeIn {
+    from { opacity: 0; transform: translateX(20px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+
+  /* header bar */
+  .align-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-bottom: none;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-dimmer);
+  }
+
+  .align-header .dot-row { display: flex; gap: 5px; }
+  .align-header .dot { width: 7px; height: 7px; border-radius: 50%; }
+  .dot-red  { background: #ff6b6b; opacity: 0.7; }
+  .dot-gold { background: #ffd166; opacity: 0.7; }
+  .dot-teal { background: #00d4a8; opacity: 0.7; }
+
+  /* main alignment block */
+  .align-body {
+    border: 1px solid var(--border);
+    background: var(--bg2);
+    padding: 1.6rem 1.4rem;
+    overflow: hidden;
+  }
+
+  /* each sequence row */
+  .seq-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 9px;
+    opacity: 0;
+    transform: translateX(-8px);
+    animation: rowSlide 0.5s ease forwards;
+  }
+
+  .seq-row:last-child { margin-bottom: 0; }
+
+  @keyframes rowSlide {
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  .seq-label {
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    color: var(--text-dimmer);
+    width: 64px;
+    flex-shrink: 0;
+    text-align: right;
+  }
+
+  .seq-bases {
+    display: flex;
+    gap: 3px;
+    flex-wrap: nowrap;
+  }
+
+  .base {
+    width: 20px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 700;
+    border-radius: 2px;
+    transition: opacity 0.3s;
+  }
+
+  /* base colors */
+  .b-A { background: rgba(0,212,168,0.18); color: #00d4a8; }
+  .b-T { background: rgba(255,107,107,0.18); color: #ff6b6b; }
+  .b-G { background: rgba(0,144,255,0.18); color: #0090ff; }
+  .b-C { background: rgba(255,209,102,0.18); color: #ffd166; }
+  .b-gap { background: transparent; color: var(--text-dimmer); }
+
+  /* highlight conserved columns */
+  .base.conserved {
+    outline: 1px solid rgba(255,255,255,0.12);
+  }
+
+  /* conservation bar below alignment */
+  .conservation-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 3px;
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+    padding-left: 76px;
+  }
+
+  .cons-bar {
+    width: 20px;
+    background: var(--accent);
+    border-radius: 1px 1px 0 0;
+    opacity: 0;
+    animation: barGrow 0.4s ease forwards;
+    transform-origin: bottom;
+  }
+
+  @keyframes barGrow {
+    from { transform: scaleY(0); opacity: 0; }
+    to   { transform: scaleY(1); opacity: 1; }
+  }
+
+  /* consensus row */
+  .consensus-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+    opacity: 0;
+    animation: rowSlide 0.5s 1.4s ease forwards;
+  }
+
+  .consensus-label {
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    width: 64px;
+    flex-shrink: 0;
+    text-align: right;
+  }
+
+  /* footer stats */
+  .align-footer {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-top: none;
+  }
+
+  .align-stat {
+    background: var(--bg3);
+    padding: 8px 12px;
+    text-align: center;
+  }
+
+  .align-stat .num {
+    font-family: var(--serif);
+    font-size: 1.2rem;
+    color: var(--accent);
+    display: block;
+  }
+
+  .align-stat .lbl {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-dimmer);
+  }
+
+  /* scrolling highlight sweep */
+  .col-highlight {
+    position: absolute;
+    top: 0; bottom: 0;
+    width: 22px;
+    background: rgba(0,212,168,0.06);
+    pointer-events: none;
+    transition: left 0.15s ease;
+  }
 
   /* ── POSTS GRID ── */
   .posts-grid {
@@ -218,13 +412,15 @@
     <li><a href="posts.html">Posts</a></li>
     <li><a href="about.html">About</a></li>
     <li><a href="subscribe.html">Subscribe</a></li>
-    <li><a href="https://github.com" target="_blank" style="color:var(--accent)">GitHub ↗</a></li>
+    <li><a href="https://github.com/arjundeshx" target="_blank" style="color:var(--accent)">GitHub ↗</a></li>
   </ul>
 </nav>
 
 <section class="hero">
   <div class="hero-bg"></div>
   <div class="hero-grid"></div>
+
+  <!-- LEFT: text -->
   <div class="hero-inner">
     <div class="hero-tag fade-up">Computational Biology · Research Blog</div>
     <h1 class="fade-up delay-1">Where <em>biology</em><br>meets the machine<span class="cursor"></span></h1>
@@ -234,6 +430,48 @@
     <div class="hero-cta fade-up delay-3">
       <a href="posts.html" class="btn btn-primary">Read Latest →</a>
       <a href="subscribe.html" class="btn btn-ghost">Subscribe to Updates</a>
+    </div>
+  </div>
+
+  <!-- RIGHT: sequence alignment -->
+  <div class="hero-visual">
+    <div class="alignment-widget">
+
+      <div class="align-header">
+        <div class="dot-row">
+          <div class="dot dot-red"></div>
+          <div class="dot dot-gold"></div>
+          <div class="dot dot-teal"></div>
+        </div>
+        <span>multiple_sequence_alignment.fasta</span>
+        <span id="alignScore" style="color:var(--accent);">id: —</span>
+      </div>
+
+      <div class="align-body" id="alignBody" style="position:relative;">
+        <div class="col-highlight" id="colHighlight" style="display:none;"></div>
+        <div id="seqRows"></div>
+        <div class="conservation-row" id="consRow"></div>
+        <div class="consensus-row" id="consensusRow">
+          <span class="consensus-label">consensus</span>
+          <div class="seq-bases" id="consensusBases"></div>
+        </div>
+      </div>
+
+      <div class="align-footer">
+        <div class="align-stat">
+          <span class="num" id="statSeqs">8</span>
+          <span class="lbl">Sequences</span>
+        </div>
+        <div class="align-stat">
+          <span class="num" id="statLen">16</span>
+          <span class="lbl">Positions</span>
+        </div>
+        <div class="align-stat">
+          <span class="num" id="statId">—</span>
+          <span class="lbl">Identity</span>
+        </div>
+      </div>
+
     </div>
   </div>
 </section>
@@ -338,6 +576,148 @@
   buildDna('dnaStrip2');
   initCardGlow('.post-card');
   initNewsletter();
+
+  // ── SEQUENCE ALIGNMENT WIDGET ──────────────────────────────────────────────
+  (function () {
+    const BASES   = ['A', 'T', 'G', 'C'];
+    const GAP     = '-';
+    const N_SEQS  = 8;
+    const SEQ_LEN = 16;
+
+    const LABELS = [
+      'Homo_sap', 'Mus_musc', 'Danio_rer',
+      'Drosoph',  'C_elegans','Arabidops',
+      'S_cerevi', 'E_coli   '
+    ];
+
+    const BASE_CLASS = { A: 'b-A', T: 'b-T', G: 'b-G', C: 'b-C', '-': 'b-gap' };
+
+    // weighted random base — biased toward G at end positions, A/T at start
+    function randBase(pos) {
+      const r = Math.random();
+      const endBias   = pos >= SEQ_LEN - 4;  // last 4 cols: heavy G bias
+      const startBias = pos < 3;              // first 3 cols: A/T/C variety
+      if (endBias)   return r < 0.55 ? 'G' : BASES[Math.floor(Math.random() * BASES.length)];
+      if (startBias) return ['A','T','C','A','T'][Math.floor(Math.random() * 5)];
+      return BASES[Math.floor(Math.random() * BASES.length)];
+    }
+
+    const reference = Array.from({ length: SEQ_LEN }, (_, i) => randBase(i));
+
+    // build sequences: conserved core, more variation at ends
+    const sequences = Array.from({ length: N_SEQS }, () =>
+      reference.map((ref, i) => {
+        const r = Math.random();
+        // slightly higher gap chance at start (mimics real alignments)
+        const gapChance = i < 2 ? 0.08 : 0.03;
+        if (r < gapChance) return GAP;
+        // conserved in middle, more variable at edges
+        const conserveChance = (i < 3 || i >= SEQ_LEN - 3) ? 0.45 : 0.62;
+        if (r < gapChance + conserveChance) return ref;
+        return randBase(i);
+      })
+    );
+
+    // compute per-column conservation (fraction matching most common base)
+    function columnConservation(col) {
+      const counts = {};
+      sequences.forEach(seq => {
+        const b = seq[col];
+        if (b !== GAP) counts[b] = (counts[b] || 0) + 1;
+      });
+      return Math.max(...Object.values(counts), 0) / N_SEQS;
+    }
+
+    // consensus: most common non-gap base per column
+    function consensusBase(col) {
+      const counts = {};
+      sequences.forEach(seq => {
+        const b = seq[col];
+        if (b !== GAP) counts[b] = (counts[b] || 0) + 1;
+      });
+      return Object.entries(counts).sort((a, b) => b[1] - a[1])[0]?.[0] ?? GAP;
+    }
+
+    const conservation = Array.from({ length: SEQ_LEN }, (_, i) => columnConservation(i));
+    const consensus    = Array.from({ length: SEQ_LEN }, (_, i) => consensusBase(i));
+
+    // overall identity = mean conservation
+    const identity = Math.round(conservation.reduce((s, v) => s + v, 0) / SEQ_LEN * 100);
+
+    // ── render rows ──
+    const seqRowsEl = document.getElementById('seqRows');
+    sequences.forEach((seq, si) => {
+      const row = document.createElement('div');
+      row.className = 'seq-row';
+      row.style.animationDelay = `${0.6 + si * 0.08}s`;
+
+      const lbl = document.createElement('span');
+      lbl.className = 'seq-label';
+      lbl.textContent = LABELS[si].trim();
+      row.appendChild(lbl);
+
+      const bases = document.createElement('div');
+      bases.className = 'seq-bases';
+
+      seq.forEach((b, ci) => {
+        const cell = document.createElement('div');
+        cell.className = `base ${BASE_CLASS[b] || 'b-gap'}`;
+        if (conservation[ci] > 0.75) cell.classList.add('conserved');
+        cell.textContent = b;
+        cell.dataset.col = ci;
+        bases.appendChild(cell);
+      });
+
+      row.appendChild(bases);
+      seqRowsEl.appendChild(row);
+    });
+
+    // ── conservation bars ──
+    const consRow = document.getElementById('consRow');
+    conservation.forEach((val, ci) => {
+      const bar = document.createElement('div');
+      bar.className = 'cons-bar';
+      bar.style.height  = `${Math.round(val * 28)}px`;
+      bar.style.opacity = 0.3 + val * 0.7;
+      bar.style.animationDelay = `${1.3 + ci * 0.04}s`;
+      // colour shifts from dim to accent based on conservation
+      bar.style.background = val > 0.75
+        ? 'var(--accent)'
+        : val > 0.5 ? 'var(--accent2)' : 'var(--border-bright)';
+      consRow.appendChild(bar);
+    });
+
+    // ── consensus row ──
+    const consBases = document.getElementById('consensusBases');
+    consensus.forEach(b => {
+      const cell = document.createElement('div');
+      cell.className = `base ${BASE_CLASS[b] || 'b-gap'}`;
+      cell.textContent = b;
+      consBases.appendChild(cell);
+    });
+
+    // ── stats ──
+    document.getElementById('statSeqs').textContent = N_SEQS;
+    document.getElementById('statLen').textContent  = SEQ_LEN;
+    document.getElementById('statId').textContent   = identity + '%';
+    document.getElementById('alignScore').textContent = `id: ${identity}%`;
+
+    // ── animated column highlight sweep ──
+    const highlight = document.getElementById('colHighlight');
+    let currentCol  = 0;
+    const LABEL_W   = 76; // 64px label width + 12px gap
+    const CELL_W    = 23; // 20px cell + 3px gap
+
+    function sweepHighlight() {
+      highlight.style.display = 'block';
+      highlight.style.left    = `${LABEL_W + currentCol * CELL_W}px`;
+      currentCol = (currentCol + 1) % SEQ_LEN;
+    }
+
+    // start sweep after widget fades in
+    setTimeout(() => setInterval(sweepHighlight, 280), 1800);
+
+  })();
 </script>
 </body>
 </html>
