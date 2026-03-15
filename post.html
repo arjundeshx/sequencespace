@@ -355,19 +355,6 @@
     <p>
       Next, we define a function that allows us to compute RMSD. The frame_interval_ps defines the number of picoseconds each frame of the trajectory is sampled at (this is different for each trajectory depending on the molecular dynamics simulation; we may cover saving DCDs every n frames in a future tutorial!). For my case, I used OpenMM to generate trajectories that had frames saved every 50 ps.
     </p>
-    <p>
-      We load in tihe topology file using md.load_topology() and select only the protein backbone alpha carbons using top.select() (as this is the component we are interested in finding the RMSD for). We then load in only the first frame of the trajectory as a reference (ref) (this is only the first frame, so it does not use up too much memory), and slice this frame to isolate only the alpha carbons in the reference frame (which we deine as ref_ca).
-    </p>
-    <p>
-      Next, we use md.iterload() to progressively load in chunks of 10 frames each; we slice the chunks to isolat the alpha carbons. Prior to calculating the RMSD, we use chunk.superpose() to align the chunk to our reference. We then compute RMSD values, build out the time axis, and append both to rmsd_values and time_values. Both arrays are concatenated and returned.
-    </p>
-
-    <div class="callout" style="border-left-color: var(--highlight);">
-      <div class="callout-label" style="color: var(--highlight);">⚠️ Important Note</div>
-      <div style="font-size: 13px; color: var(--text-dim); line-height: 1.8;">
-        We must use md.superpose() before calculating any RMSDs! This is because we <em>generally </em>do NOT care about global translations or rotations of a protein when looking at RMSDs and only want to capture internal conformational changes (i.e shape changes). md.superpose() aligns each chunk with the reference frame and eliminates the effect of global translocations/rotations by minimizing RMSD without altering relative positions. Some libraries perform this alignment implicitly, but MDTraj does not.
-      </div>
-    </div>
 
       <pre><code><span class="kw">def</span> <span class="fn">compute_rmsd</span>(traj_file, top_file, frame_interval_ps=<span class="str">50.0</span>, chunk_size=<span class="str">10</span>):
 
@@ -397,29 +384,44 @@
         <span class="kw">return</span> np.<span class="fn">concatenate</span>(time_values), np.<span class="fn">concatenate</span>(rmsd_values)
     </code></pre>
 
+    <p>
+      We load in tihe topology file using md.load_topology() and select only the protein backbone alpha carbons using top.select() (as this is the component we are interested in finding the RMSD for). We then load in only the first frame of the trajectory as a reference (ref) (this is only the first frame, so it does not use up too much memory), and slice this frame to isolate only the alpha carbons in the reference frame (which we deine as ref_ca).
+    </p>
+    <p>
+      Next, we use md.iterload() to progressively load in chunks of 10 frames each; we slice the chunks to isolat the alpha carbons. Prior to calculating the RMSD, we use chunk.superpose() to align the chunk to our reference. We then compute RMSD values, build out the time axis, and append both to rmsd_values and time_values. Both arrays are concatenated and returned.
+    </p>
 
-  
+    <div class="callout" style="border-left-color: var(--highlight);">
+      <div class="callout-label" style="color: var(--highlight);">⚠️ Important Note</div>
+      <div style="font-size: 13px; color: var(--text-dim); line-height: 1.8;">
+        We must use md.superpose() before calculating any RMSDs! This is because we <em>generally </em>do NOT care about global translations or rotations of a protein when looking at RMSDs and only want to capture internal conformational changes (i.e shape changes). md.superpose() aligns each chunk with the reference frame and eliminates the effect of global translocations/rotations by minimizing RMSD without altering relative positions. Some libraries perform this alignment implicitly, but MDTraj does not.
+      </div>
+    </div>
+    <p>
+    Next, we call this function to obtain coupled arrays of time (in nanosecond) and RMSD (with the reference frame being the first frame of the trajectory). We then graph this information using matplotlib, and save the graphs to a PDF using PDFPages.
+  </p>
     <pre><code>time_wt,  rmsd_wt  = <span class="fn">compute_rmsd</span>(WT_TRAJ,  WT_TOP)
       time_mut, rmsd_mut = <span class="fn">compute_rmsd</span>(MUT_TRAJ, MUT_TOP)
+      
+      fig, ax = plt.<span class="fn">subplots</span>(figsize=(<span class="str">8</span>, <span class="str">6</span>))
+      
+      ax.<span class="fn">plot</span>(time_wt,  rmsd_wt,  color=<span class="str">"steelblue"</span>,   linewidth=<span class="str">1</span>, label=<span class="str">"Wild-Type"</span>)
+      ax.<span class="fn">plot</span>(time_mut, rmsd_mut, color=<span class="str">"lightskyblue"</span>, linewidth=<span class="str">1</span>, label=<span class="str">"Mutant"</span>)
+      
+      ax.<span class="fn">set_xlabel</span>(<span class="str">"Time (ns)"</span>)
+      ax.<span class="fn">set_ylabel</span>(<span class="str">"RMSD (nm)"</span>)
+      ax.<span class="fn">set_title</span>(<span class="str">"Protein Cα RMSD vs Time — Wild-Type vs Mutant"</span>)
+      ax.<span class="fn">legend</span>()
+      ax.<span class="fn">grid</span>(<span class="str">True</span>, alpha=<span class="str">0.3</span>)
+      
+      <span class="kw">with</span> <span class="fn">PdfPages</span>(<span class="str">"RMSD_WT_vs_Mutant.pdf"</span>) <span class="kw">as</span> pdf:
+          pdf.<span class="fn">savefig</span>(fig)
+      
+      plt.<span class="fn">close</span>(fig)
       </code></pre>
+      <p>And just like that, we have code that plots RMSD vs. time!</p>
 
 
-      <pre><code>fig, ax = plt.<span class="fn">subplots</span>(figsize=(<span class="str">8</span>, <span class="str">6</span>))
-
-        ax.<span class="fn">plot</span>(time_wt,  rmsd_wt,  color=<span class="str">"steelblue"</span>,   linewidth=<span class="str">1</span>, label=<span class="str">"Wild-Type"</span>)
-        ax.<span class="fn">plot</span>(time_mut, rmsd_mut, color=<span class="str">"lightskyblue"</span>, linewidth=<span class="str">1</span>, label=<span class="str">"Mutant"</span>)
-        
-        ax.<span class="fn">set_xlabel</span>(<span class="str">"Time (ns)"</span>)
-        ax.<span class="fn">set_ylabel</span>(<span class="str">"RMSD (nm)"</span>)
-        ax.<span class="fn">set_title</span>(<span class="str">"Protein Cα RMSD vs Time — Wild-Type vs Mutant"</span>)
-        ax.<span class="fn">legend</span>()
-        ax.<span class="fn">grid</span>(<span class="str">True</span>, alpha=<span class="str">0.3</span>)
-        
-        <span class="kw">with</span> <span class="fn">PdfPages</span>(<span class="str">"RMSD_WT_vs_Mutant.pdf"</span>) <span class="kw">as</span> pdf:
-            pdf.<span class="fn">savefig</span>(fig)
-        
-        plt.<span class="fn">close</span>(fig)
-        </code></pre>
 
     <h2>What Comes After Structure?</h2>
 
