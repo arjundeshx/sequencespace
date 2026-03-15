@@ -423,10 +423,10 @@
 
 
 
-    <h2>What Comes After Structure?</h2>
-
+    <h2>Calculating RMSF with MDAnalysis</h2>
+    <h3>Why Use MDAnalysis?/h3>
     <p>
-      The most exciting frontier, in my view, is not better static structure prediction — it's using predicted structures as priors for dynamic simulation. Tools like OpenMM and GROMACS can now be seeded with AF3 coordinates to run molecular dynamics, and the combination is genuinely powerful.
+      I use MDAnalysis rather than MDTraj for RMSF calculation - MDAnalysis is nice because it features lazy loading (we do not have to deal with memory issues), and it implicitly aligns trajectories (we do not have to deal with alignment functions like md.superpose())
     </p>
 
     <p>
