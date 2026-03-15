@@ -424,11 +424,12 @@
 
 
     <h2>Calculating RMSF with MDAnalysis</h2>
-    <h3>Why Use MDAnalysis?/h3>
+    <h3>Why Use MDAnalysis?</h3>
     <p>
-      I use MDAnalysis rather than MDTraj for RMSF calculation - MDAnalysis is nice because it features lazy loading (we do not have to deal with memory issues), and it implicitly aligns trajectories (we do not have to deal with alignment functions like md.superpose())
+      I use MDAnalysis rather than MDTraj for RMSF calculation - MDAnalysis is nice because it features lazy loading (we do not have to deal with memory issues), but despite this, MDAnalysis like MDTraj does not implicitly align frames to a reference when calculating RMSF, so this is something we must do ourselves.
     </p>
 
+    <h3>What Is RMSF?</h3>
     <p>
       There's also a growing ecosystem of structure-aware machine learning models — GVP, EquiFold, and others — that take structural representations as input and predict function, binding affinity, or mutational effects. The bottleneck is no longer getting structures; it's knowing what to do with them.
     </p>
