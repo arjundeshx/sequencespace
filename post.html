@@ -309,10 +309,6 @@
     <p>
       RMSD is essentially a measure of the distance from a conformation of a biomolecule (e.g a protein) to some reference structure. RMSD calculations work by measuring the 3-dimensional distance between reference atoms and corresponding atoms in a particular frame of a trajectory, squaring and taking the average of these squared distances across all of the atom pairs being compared, and finally taking the square root. The function of squaring is to eliminate negative distances so as to capture movements in opposing directions as an RMSD of > 0 (i.e if one part of an object moved right, while the another part moved equivalently left from a reference, we would not want those to cancel out - eliminating signs is the function of squaring in RMSD).
     </p>
-    <blockquote>
-      "The structure is the vocabulary. The dynamics are the language."
-    </blockquote>
-
     <p>
       This post will deal with the RMSD over time of proteins. A change in RMSD indicates a change in the conformation of a protein, and different conformations show up as stable, flat-lines on RMSD vs. time graphs. For our purposes, we compare each frame of a trajectory to the starting structure (frame = 0) as a reference to measure divergence from the starting structure over time. Thus, looking at RMSD vs. time plots will enable us to see long-term conformational changes. 
     </p>
@@ -341,7 +337,7 @@
     <h2>The Code</h2>
 
     <p>
-      The open-weight AF3 release requires some setup. Here's the pipeline I use for batch predictions on a protein family of interest:
+      To make RMSD vs. time plots we start by importing some key libraries (including MDTraj). In this tutorial, we will generate a graph that compares the RMSDs values between a wild-type and mutant trajectory. We define file paths for the DCDs that represent the wild-type and mutant trajectories, as well as the topology files for both (which represent the connectivity and identity of the atoms represented by the trajectory files).
     </p>
 
     <pre><code><span class="kw">import</span> mdtraj <span class="kw">as</span> md
@@ -355,6 +351,23 @@
       WT_TOP   = <span class="str">"/path/to/wildtype_topology.psf"</span>
       MUT_TOP  = <span class="str">"/path/to/mutant_topology.psf"</span>
       </code></pre>
+
+    <p>
+      Next, we define a function that allows us to compute RMSD. The frame_interval_ps defines the number of picoseconds each frame of the trajectory is sampled at (this is different for each trajectory depending on the molecular dynamics simulation; we may cover saving DCDs every n frames in a future tutorial!). For my case, I used OpenMM to generate trajectories that had frames saved every 50 ps.
+    </p>
+    <p>
+      We load in tihe topology file using md.load_topology() and select only the protein backbone alpha carbons using top.select() (as this is the component we are interested in finding the RMSD for). We then load in only the first frame of the trajectory as a reference (ref) (this is only the first frame, so it does not use up too much memory), and slice this frame to isolate only the alpha carbons in the reference frame (which we deine as ref_ca).
+    </p>
+    <p>
+      Next, we use md.iterload() to progressively load in chunks of 10 frames each; we slice the chunks to isolat the alpha carbons. Prior to calculating the RMSD, we use chunk.superpose() to align the chunk to our reference. We then compute RMSD values, build out the time axis, and append both to rmsd_values and time_values. Both arrays are concatenated and returned.
+    </p>
+
+    <div class="callout" style="border-left-color: var(--highlight);">
+      <div class="callout-label" style="color: var(--highlight);">⚠️ Important Note</div>
+      <div style="font-size: 13px; color: var(--text-dim); line-height: 1.8;">
+        We must use md.superpose() before calculating any RMSDs! This is because we <em>generally </em>do NOT care about global translations or rotations of a protein when looking at RMSDs and only want to capture internal conformational changes (i.e shape changes). md.superpose() aligns each chunk with the reference frame and eliminates the effect of global translocations/rotations by minimizing RMSD without altering relative positions. Some libraries perform this alignment implicitly, but MDTraj does not.
+      </div>
+    </div>
 
       <pre><code><span class="kw">def</span> <span class="fn">compute_rmsd</span>(traj_file, top_file, frame_interval_ps=<span class="str">50.0</span>, chunk_size=<span class="str">10</span>):
 
@@ -385,6 +398,7 @@
     </code></pre>
 
 
+  
     <pre><code>time_wt,  rmsd_wt  = <span class="fn">compute_rmsd</span>(WT_TRAJ,  WT_TOP)
       time_mut, rmsd_mut = <span class="fn">compute_rmsd</span>(MUT_TRAJ, MUT_TOP)
       </code></pre>
