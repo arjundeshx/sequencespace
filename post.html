@@ -446,7 +446,7 @@ plt.<span class="fn">close</span>(fig)
     </div>
 
     <h2 id="rmsf-code">The Code — RMSF Calculation</h2>
-
+<p>Like in the previous example, we begin by setting up our imports and file paths: in this example, as in the last, we will practice by comparing the per-residue RMSF distributions for mutant and wild-type trajectories.</p>
 <pre><code><span class="kw">import</span> matplotlib.pyplot <span class="kw">as</span> plt
 <span class="kw">import</span> MDAnalysis <span class="kw">as</span> mda
 <span class="kw">from</span> MDAnalysis.analysis <span class="kw">import</span> rms, align
@@ -458,6 +458,33 @@ MUT_TOPO = <span class="str">"/path/to/mutant_topology.psf"</span>
 WT_TRAJ  = <span class="str">"/path/to/wildtype_production.dcd"</span>
 MUT_TRAJ = <span class="str">"/path/to/mutant_production.dcd"</span>
 </code></pre>
+
+
+<div class="callout" style="border-left-color: var(--highlight);">
+  <div class="callout-label" style="color: var(--highlight);">⚠️ Important Note</div>
+  <div style="font-size: 13px; color: var(--text-dim); line-height: 1.8;">
+    Note that in this example, unlike the last we use the <em>average structure</em> as the reference rather than the first frame; it makes sense to calculate time-average deviation from an average when measuring fluctuation, while when calculating RMSD it makes sense to calculate deviation from a starting structure (the first frame). The calculate_rmsf() function <em>does compare to the average structure implicitly but we still need a dedicated find_avg() function as we align all frames in the trajectory to the average prior to RMSF calculation to remove effects of rotation and translation.</em>
+  </div>
+</div>
+<p>
+  We build the find_avg() function which accepts an MDAnalysis.Universe object (u): universes are the core objects of MDAnalysis and represent a trajectory along with its corresponding topology. The find_avg function computes a average structure which we use for alignment. Averages are calculated for only protein backbone alpha carbons using our selection and returned as a Universe object.
+</p>
+<p>
+  We also create a perform_aligment() function to align trajectories to our average frame before doing RMSF calculations (much like we aligned to the first frame before doing RMSD calculations). The function takes in a target Universe (u), an average Universe (avg) and a filename to which the aligned trajectory is written (as a DCD file).
+</p>
+
+
+<div class="callout" style="border-left-color: var(--highlight);">
+  <div class="callout-label" style="color: var(--highlight);">⚠️ Important Note</div>
+  <div style="font-size: 13px; color: var(--text-dim); line-height: 1.8;">
+    The perform_aligment() function takes advantage of MDAnalysis's builtin streaming to avoid filling up memory - by setting in_memory to false, we sequentially load in frames to RAM and write aligned trajectories to the disk, and save the aligned trajectory to the disk, rather than putting all of it in RAM.
+  </div>
+</div>
+
+<p>MDAnalysis.
+  Finally, we write a calculate_rmsf() function; this takes in a filename (which points to our average-aligned trajectory) and topology file as inputs. It uses these inputs to create a new universe for the aligned trajectory, select the alpha carbons, and calculate the RMSF per-residue which is returned by the function. R is a MDAnalysis.rms.RMSF object, and the .rmsf attribute of this object is an array of RMSF values (for each alpha carbon).
+</p>
+
 
 <pre><code><span class="kw">def</span> <span class="fn">find_avg</span>(u):
     avg = align.<span class="fn">AverageStructure</span>(
@@ -482,6 +509,8 @@ MUT_TRAJ = <span class="str">"/path/to/mutant_production.dcd"</span>
     <span class="kw">return</span> R
 </code></pre>
 
+<p>We make the WT and mutant universes using the topology and trajectory files, and then run the functions we defined accordingly. We also select alpha carbons from the wild-type universe and get .resids to have a list of residue IDs (this will help for our plots!).</p>
+
 <pre><code><span class="cm"># wild-type</span>
 u_wt  = mda.<span class="fn">Universe</span>(WT_TOPO,  WT_TRAJ)
 <span class="fn">perform_alignment</span>(u_wt,  <span class="fn">find_avg</span>(u_wt),  <span class="str">"aligned_wt.dcd"</span>)
@@ -496,6 +525,8 @@ rmsf_mut = <span class="fn">calculate_rmsf</span>(<span class="str">"aligned_mut
 resids = u_wt.<span class="fn">select_atoms</span>(<span class="str">"protein and name CA"</span>).resids
 </code></pre>
 
+
+<p>Finally, we use the residue list for the x-axis and graph the RMSF by using the MDAnalysis.rms.RMSF objects (wt_rmsf and mut_rmsf): the .rmsf attribute of these objects contains an array of RMSFs for each alpha carbon (corresponding to the residues on the x-axis). We then use the matplotlib to plot and save!</p>
 <pre><code>fig, ax = plt.<span class="fn">subplots</span>(figsize=(<span class="str">8</span>, <span class="str">6</span>))
 
 ax.<span class="fn">plot</span>(resids, rmsf_wt.rmsf,  color=<span class="str">"steelblue"</span>,   linewidth=<span class="str">1</span>, label=<span class="str">"Wild-Type"</span>)
@@ -512,6 +543,8 @@ ax.<span class="fn">grid</span>(<span class="str">True</span>, alpha=<span class
 
 plt.<span class="fn">close</span>(fig)
 </code></pre>
+
+<p>And that's it! Functional code for calculating RMSF and RMSD - I hope this tutorial was helpful and a bit easier to understand than parsing through the documentation for these packages.</p>
 
   </article>
 
