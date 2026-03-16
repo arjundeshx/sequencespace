@@ -334,7 +334,7 @@
       By default, MDTraj loads in the entire trajectory when using the function md.load() (which will be demonstrated in the code that follows) - this can be a huge problem for large trajectories. Attempting to load in an entire trajectory into RAM fills it up quickly - this will break your analysis code, or make it impossibly slow. Fortunately, MDTraj includes the function md.iterload() which allows us to load in chunks of a trajectory at a time for comparison and RMSD calculation without filling up memory.
     </p>
 
-    <h2>The Code</h2>
+    <h2>The Code - RMSD Calculation</h2>
 
     <p>
       To make RMSD vs. time plots we start by importing some key libraries (including MDTraj). In this tutorial, we will generate a graph that compares the RMSDs values between a wild-type and mutant trajectory. We define file paths for the DCDs that represent the wild-type and mutant trajectories, as well as the topology files for both (which represent the connectivity and identity of the atoms represented by the trajectory files).
@@ -431,24 +431,88 @@
 
     <h3>What Is RMSF?</h3>
     <p>
-      There's also a growing ecosystem of structure-aware machine learning models — GVP, EquiFold, and others — that take structural representations as input and predict function, binding affinity, or mutational effects. The bottleneck is no longer getting structures; it's knowing what to do with them.
+      RMSF is a measure of flexibility: it meausres thea average mobility or flexibility of residues or atoms (in this case, we will be using only alpha carbons to model the flexibility of residues) calculated as the time-average deviation of atoms from a reference position. In this example, we use alpha carbons and exclude side chains to measure backbone flexibility and reduce noise. Note that this approach is only appropriate when the flexibility of side chain atoms is not of interest (and the backbone is more important): in cases where side chain flexibility is important, it might be helpful to calculate the average RMSF for all heavy atoms in a residue.
     </p>
 
-    <h3>My Current Workflow</h3>
+    <div class="callout" style="border-left-color: var(--accent);">
+      <div class="callout-label">📐 Formula</div>
+      <div style="margin-bottom: 0.6rem; color: var(--text);">Root Mean Square Fluctuation (RMSF)</div>
+      <div style="text-align: center; padding: 1.2rem; background: var(--bg3); border: 1px solid var(--border); margin: 0.8rem 0; color: #e8f2ff;">
+        \[ \text{RMSF}(i) = \sqrt{\frac{1}{T} \sum_{t=1}^{T} \left\| r_i(t) - \langle r_i \rangle \right\|^2} \]
+      </div>
+      <div style="font-size: 12px; color: var(--text-dim); line-height: 1.8;">
+        where \(T\) is the total number of frames, \(r_i(t)\) is the position of residue \(i\) at time \(t\),
+        and \(\langle r_i \rangle\) is its time-averaged position over the trajectory.
+      </div>
+    </div>
 
-    <p>
-      For a recent project predicting the effect of point mutations on binding stability, my pipeline looked like this: AF3 prediction → ensemble generation with 5 random seeds → per-residue confidence filtering → Rosetta ddG calculation → ESM-1v zero-shot mutant scoring → ensemble averaging. The combination outperformed any single method.
-    </p>
+    <h2>The Code - RMSF Calculation</h2>
 
-    <h2>Conclusion</h2>
+    <pre><code><span class="kw">import</span> matplotlib.pyplot <span class="kw">as</span> plt
+      <span class="kw">import</span> MDAnalysis <span class="kw">as</span> mda
+      <span class="kw">from</span> MDAnalysis.analysis <span class="kw">import</span> rms, align
+      <span class="kw">from</span> matplotlib.backends.backend_pdf <span class="kw">import</span> PdfPages
+      
+      WT_TOPO  = <span class="str">"/path/to/wildtype_topology.psf"</span>
+      MUT_TOPO = <span class="str">"/path/to/mutant_topology.psf"</span>
+      
+      WT_TRAJ  = <span class="str">"/path/to/wildtype_production.dcd"</span>
+      MUT_TRAJ = <span class="str">"/path/to/mutant_production.dcd"</span>
+      </code></pre>
 
-    <p>
-      AlphaFold 3 is a genuinely transformative tool. But transformative tools don't end fields — they open new ones. The protein folding problem, narrowly defined, is largely solved. The problems of protein dynamics, disorder, and function remain wide open.
-    </p>
+      <pre><code><span class="kw">def</span> <span class="fn">find_avg</span>(u):
+        avg = align.<span class="fn">AverageStructure</span>(
+            u, u,
+            select=<span class="str">"protein and name CA"</span>,
+            ref_frame=<span class="str">0</span>
+        ).<span class="fn">run</span>()
+        <span class="kw">return</span> avg.universe
+    
+    <span class="kw">def</span> <span class="fn">perform_alignment</span>(u, avg, fname):
+        align.<span class="fn">AlignTraj</span>(
+            u, avg,
+            select=<span class="str">'protein and name CA'</span>,
+            filename=fname,
+            in_memory=<span class="str">False</span>
+        ).<span class="fn">run</span>()
+    
+    <span class="kw">def</span> <span class="fn">calculate_rmsf</span>(fname, topo):
+        aligned_traj = mda.<span class="fn">Universe</span>(topo, fname)
+        c_alphas = aligned_traj.<span class="fn">select_atoms</span>(<span class="str">"protein and name CA"</span>)
+        R = rms.<span class="fn">RMSF</span>(c_alphas).<span class="fn">run</span>()
+        <span class="kw">return</span> R
+    </code></pre>
 
-    <p>
-      If you're a computationalist just getting into structural biology, this is an exciting time. The infrastructure is finally good enough that you can ask biological questions rather than engineering questions. Don't waste that by treating AF3 as an oracle.
-    </p>
+    <pre><code><span class="cm"># wild-type</span>
+      u_wt  = mda.<span class="fn">Universe</span>(WT_TOPO,  WT_TRAJ)
+      <span class="fn">perform_alignment</span>(u_wt,  <span class="fn">find_avg</span>(u_wt),  <span class="str">"aligned_wt.dcd"</span>)
+      rmsf_wt  = <span class="fn">calculate_rmsf</span>(<span class="str">"aligned_wt.dcd"</span>,  WT_TOPO)
+      
+      <span class="cm"># mutant</span>
+      u_mut = mda.<span class="fn">Universe</span>(MUT_TOPO, MUT_TRAJ)
+      <span class="fn">perform_alignment</span>(u_mut, <span class="fn">find_avg</span>(u_mut), <span class="str">"aligned_mut.dcd"</span>)
+      rmsf_mut = <span class="fn">calculate_rmsf</span>(<span class="str">"aligned_mut.dcd"</span>, MUT_TOPO)
+      
+      <span class="cm"># residue IDs for the x-axis (taken from WT topology)</span>
+      resids = u_wt.<span class="fn">select_atoms</span>(<span class="str">"protein and name CA"</span>).resids
+      </code></pre>
+
+      <pre><code>fig, ax = plt.<span class="fn">subplots</span>(figsize=(<span class="str">8</span>, <span class="str">6</span>))
+
+        ax.<span class="fn">plot</span>(resids, rmsf_wt.rmsf,  color=<span class="str">"steelblue"</span>,   linewidth=<span class="str">1</span>, label=<span class="str">"Wild-Type"</span>)
+        ax.<span class="fn">plot</span>(resids, rmsf_mut.rmsf, color=<span class="str">"lightskyblue"</span>, linewidth=<span class="str">1</span>, label=<span class="str">"Mutant"</span>)
+        
+        ax.<span class="fn">set_xlabel</span>(<span class="str">"Residue Number"</span>)
+        ax.<span class="fn">set_ylabel</span>(<span class="str">"RMSF (Å)"</span>)
+        ax.<span class="fn">set_title</span>(<span class="str">"Per-Residue Cα RMSF — Wild-Type vs Mutant"</span>)
+        ax.<span class="fn">legend</span>()
+        ax.<span class="fn">grid</span>(<span class="str">True</span>, alpha=<span class="str">0.3</span>)
+        
+        <span class="kw">with</span> <span class="fn">PdfPages</span>(<span class="str">"RMSF_WT_vs_Mutant.pdf"</span>) <span class="kw">as</span> pdf:
+            pdf.<span class="fn">savefig</span>(fig)
+        
+        plt.<span class="fn">close</span>(fig)
+        </code></pre>
 
   </article>
 
