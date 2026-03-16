@@ -305,7 +305,7 @@
     </p>
 
     <h2>Calculating RMSD with MDTraj</h2>
-
+    <h3>What is RMSD?</h3>
     <p>
       RMSD is essentially a measure of the distance from a conformation of a biomolecule (e.g a protein) to some reference structure. RMSD calculations work by measuring the 3-dimensional distance between reference atoms and corresponding atoms in a particular frame of a trajectory, squaring and taking the average of these squared distances across all of the atom pairs being compared, and finally taking the square root. The function of squaring is to eliminate negative distances so as to capture movements in opposing directions as an RMSD of > 0 (i.e if one part of an object moved right, while the another part moved equivalently left from a reference, we would not want those to cancel out - eliminating signs is the function of squaring in RMSD).
     </p>
@@ -520,11 +520,14 @@
     <div class="sidebar-box">
       <h4>Table of Contents</h4>
       <ul class="toc-list">
-        <li><a href="#">What AF3 Actually Does</a></li>
-        <li><a href="#">The Disorder Problem</a></li>
-        <li><a href="#">Running AF3 Locally</a></li>
-        <li><a href="#">What Comes After Structure?</a></li>
-        <li><a href="#">Conclusion</a></li>
+        <li><a href="#">Calculating RMSD with MDTraj</a></li>
+        <li><a href="#">What is RMSD?</a></li>
+        <li><a href="#">The Memory Problem</a></li>
+        <li><a href="#">The Code - RMSD Calculation</a></li>
+        <li><a href="#">Calculating RMSF with MDAnalysis</a></li>
+        <li><a href="#">Why Use MDAnalysis?</a></li>
+        <li><a href="#">What is RMSF?</a></li>
+        <li><a href="#">The Code - RMSF Calculation</a></li>
       </ul>
     </div>
 
