@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StudyFormer — SequenceSpace</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<style>
+  .post-header {
+    padding-top: 120px;
+    padding-bottom: 4rem;
+    padding-left: 3rem;
+    padding-right: 3rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 2;
+    border-bottom: 1px solid var(--border);
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 4rem;
+    align-items: end;
+  }
+
+  .post-header .breadcrumb {
+    font-size: 11px;
+    color: var(--text-dimmer);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: 1.5rem;
+  }
+  .post-header .breadcrumb a { color: var(--accent); text-decoration: none; }
+
+  .post-header h1 {
+    font-family: var(--serif);
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    font-weight: 300;
+    line-height: 1.1;
+    color: #e8f2ff;
+    margin-bottom: 1.5rem;
+  }
+
+  .post-header h1 em { font-style: italic; color: var(--accent); }
+
+  .post-header .lead {
+    font-size: 15px;
+    color: var(--text-dim);
+    line-height: 1.8;
+    max-width: 620px;
+  }
+
+  .post-meta-block {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    padding: 1.5rem;
+    font-size: 12px;
+  }
+
+  .meta-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .meta-row:last-child { border-bottom: none; }
+  .meta-row .key { color: var(--text-dimmer); text-transform: uppercase; letter-spacing: 0.1em; font-size: 10px; }
+  .meta-row .val { color: var(--text); }
+
+  .article-layout {
+    position: relative;
+    z-index: 2;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 5rem 3rem;
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 5rem;
+    align-items: start;
+  }
+
+  .article-body {
+    font-size: 15px;
+    line-height: 1.9;
+    color: var(--text);
+  }
+
+  .article-body h2 {
+    font-family: var(--serif);
+    font-size: 1.9rem;
+    font-weight: 300;
+    color: #e8f2ff;
+    margin: 3rem 0 1rem;
+    line-height: 1.2;
+  }
+
+  .article-body h3 {
+    font-family: var(--mono);
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    margin: 2rem 0 0.8rem;
+  }
+
+  .article-body p { margin-bottom: 1.4rem; color: var(--text-dim); }
+  .article-body p strong { color: var(--text); font-weight: 700; }
+
+  .article-body a { color: var(--accent); text-decoration: none; border-bottom: 1px solid rgba(0,212,168,0.3); }
+  .article-body a:hover { border-color: var(--accent); }
+
+  .article-body blockquote {
+    border-left: 3px solid var(--accent);
+    padding: 1rem 1.5rem;
+    margin: 2rem 0;
+    background: var(--bg2);
+    color: var(--text);
+    font-style: italic;
+  }
+
+  .article-body pre {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    padding: 1.5rem;
+    overflow-x: auto;
+    margin: 1.5rem 0;
+    font-size: 12px;
+    line-height: 1.6;
+  }
+
+  .article-body code {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    padding: 2px 6px;
+    font-size: 12px;
+    color: var(--accent2);
+  }
+
+  .article-body pre code {
+    background: none;
+    border: none;
+    padding: 0;
+    color: var(--text);
+  }
+
+  .kw  { color: var(--accent2); }
+  .str { color: var(--accent); }
+  .cm  { color: var(--text-dimmer); }
+  .fn  { color: var(--highlight); }
+
+  .article-body .callout {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent2);
+    padding: 1.2rem 1.5rem;
+    margin: 2rem 0;
+    font-size: 13px;
+  }
+
+  .callout-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--accent2);
+    margin-bottom: 0.4rem;
+  }
+
+  .article-sidebar { position: sticky; top: 80px; }
+
+  .sidebar-box {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .sidebar-box h4 {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--text-dimmer);
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .toc-list { list-style: none; }
+  .toc-list li { margin-bottom: 0.5rem; }
+  .toc-list a {
+    font-size: 12px;
+    color: var(--text-dim);
+    text-decoration: none;
+    transition: color 0.2s;
+    display: block;
+    padding: 2px 0;
+  }
+  .toc-list a:hover { color: var(--accent); }
+  .toc-list .toc-sub { padding-left: 0.8rem; font-size: 11px; }
+
+  .related-post {
+    display: block;
+    text-decoration: none;
+    padding: 0.8rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .related-post:last-child { border-bottom: none; }
+
+  .related-post .rp-title {
+    font-family: var(--serif);
+    font-size: 0.95rem;
+    font-weight: 300;
+    color: var(--text);
+    margin-bottom: 4px;
+    line-height: 1.3;
+    transition: color 0.2s;
+  }
+  .related-post:hover .rp-title { color: var(--accent); }
+  .related-post .rp-date { font-size: 11px; color: var(--text-dimmer); }
+
+  .post-nav {
+    position: relative;
+    z-index: 2;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 3rem 6rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+
+  .post-nav-card {
+    background: var(--bg2);
+    padding: 2rem;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .post-nav-card:hover { background: var(--bg3); }
+  .post-nav-card:hover .pnc-title { color: var(--accent); }
+
+  .pnc-dir {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--text-dimmer);
+    margin-bottom: 0.5rem;
+  }
+
+  .pnc-title {
+    font-family: var(--serif);
+    font-size: 1.1rem;
+    font-weight: 300;
+    color: #d4e6f8;
+    line-height: 1.3;
+    transition: color 0.2s;
+  }
+
+  .post-nav-card.next { text-align: right; }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">sequence<span>space</span> <span style="color:var(--border-bright);">//</span></a>
+  <ul class="nav-links">
+    <li><a href="posts.html" class="active">Posts</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="subscribe.html">Subscribe</a></li>
+    <li><a href="https://github.com/arjundeshx" target="_blank" style="color:var(--accent)">GitHub ↗</a></li>
+  </ul>
+</nav>
+
+<div class="post-header">
+  <div>
+    <div class="breadcrumb"><a href="index.html">Home</a> / <a href="posts.html">Posts</a> / Machine Learning</div>
+    <div style="margin-bottom:1rem;"><span class="post-tag tag-ml">Machine Learning</span></div>
+    <h1 class="fade-up"><br>StudyFormer - A Multi-View ViT-Based Model That Thinks Like a <em>Radiologist</em></h1>
+    <p class="lead fade-up delay-1">A basic simulation post-processing walkthrough to help you handle large trajectories using MDTraj and MDAnalysis, two widely used frameworks for analyzing molecular dynamics simulations.</p>
+  </div>
+  <div class="post-meta-block fade-up delay-2">
+    <div class="meta-row"><span class="key">Date</span><span class="val">Mar 14, 2026</span></div>
+    <div class="meta-row"><span class="key">Read time</span><span class="val">10 min</span></div>
+    <div class="meta-row"><span class="key">Topic</span><span class="val">Structural Biology</span></div>
+    <div class="meta-row"><span class="key">Code</span><span class="val"><a href="https://github.com/arjundeshx" style="color:var(--accent);text-decoration:none;">GitHub ↗</a></span></div>
+  </div>
+</div>
+
+<div class="genome-strip"><div class="genome-strip-inner" id="dnaStrip1"></div></div>
+
+<div class="article-layout">
+  <article class="article-body">
+
+    <p>
+      When analyzing large molecular dynamics (MD) trajectories, it can be difficult to make sense of the data. The easiest and simplest ways to get started analyzing and comparing the movement of proteins is by generating plots for root mean square deviation (RMSD) and per-residue root mean square fluctuation (RMSF).
+    </p>
+
+    <p>
+      In my experience, the MDTraj and MDAnalysis python packages have been immensely useful for the analysis of molecular dynamics (MD) simulations; they are highly programmable and customizeable. Despite this, it can be cumbersome to parse through the documentation for these libraries, and dealing with large trajectories is often memory intensive.
+      <strong>In this tutorial, I will cover the basic methods I use to calculate per-residue RMSF and backbone RMSD in a memory-safe way that works on any personal computer.</strong>
+    </p>
+
+    <h2 id="rmsd-mdtraj">Calculating RMSD with MDTraj</h2>
+    <h3 id="what-is-rmsd">What is RMSD?</h3>
+    <p>
+      RMSD is essentially a measure of the distance from a conformation of a biomolecule (e.g a protein) to some reference structure. RMSD calculations work by measuring the 3-dimensional distance between reference atoms and corresponding atoms in a particular frame of a trajectory, squaring and taking the average of these squared distances across all of the atom pairs being compared, and finally taking the square root. The function of squaring is to eliminate negative distances so as to capture movements in opposing directions as an RMSD of > 0 (i.e if one part of an object moved right, while the another part moved equivalently left from a reference, we would not want those to cancel out - eliminating signs is the function of squaring in RMSD).
+    </p>
+    <p>
+      This post will deal with the RMSD over time of proteins. A change in RMSD indicates a change in the conformation of a protein, and different conformations show up as stable, flat-lines on RMSD vs. time graphs. For our purposes, we compare each frame of a trajectory to the starting structure (frame = 0) as a reference to measure divergence from the starting structure over time. Thus, looking at RMSD vs. time plots will enable us to see long-term conformational changes.
+    </p>
+
+    <div class="callout" style="border-left-color: var(--accent);">
+      <div class="callout-label">📐 Formula</div>
+      <div style="margin-bottom: 0.6rem; color: var(--text);">Root Mean Square Deviation (RMSD)</div>
+      <div style="text-align: center; padding: 1.2rem; background: var(--bg3); border: 1px solid var(--border); margin: 0.8rem 0; color: #e8f2ff;">
+        \[ \text{RMSD}(t) = \sqrt{\frac{1}{N} \sum_{i=1}^{N} \left\| r_i(t) - r_i^{\text{ref}} \right\|^2} \]
+      </div>
+      <div style="font-size: 12px; color: var(--text-dim); line-height: 1.8;">
+        where \(N\) is the number of atoms, \(r_i(t)\) is the position of atom \(i\) at time \(t\),
+        and \(r_i^{\text{ref}}\) is its position in the reference structure.
+      </div>
+    </div>
+
+    <p>
+      For our purposes we will restrict the atoms being compared in the RMSD calculation to the alpha carbons of the protein backbone - amino acid side chains are flexible and move around a lot over the course of a typical MD simulation, and when looking for a change in shape within a protein what we really care about is a change in the structure of the backbone of a protein. This is why it can be convenient to use solely alpha carbons for RMSD calculations.
+    </p>
+
+    <h3 id="memory-problem">The Memory Problem</h3>
+    <p>
+      By default, MDTraj loads in the entire trajectory when using the function md.load() — this can be a huge problem for large trajectories. Attempting to load an entire trajectory into RAM fills it up quickly — this will break your analysis code, or make it impossibly slow. Fortunately, MDTraj includes the function md.iterload() which allows us to load in chunks of a trajectory at a time for comparison and RMSD calculation without filling up memory.
+    </p>
+
+    <h2 id="rmsd-code">The Code — RMSD Calculation</h2>
+
+    <p>
+      To make RMSD vs. time plots we start by importing some key libraries (including MDTraj). In this tutorial, we will generate a graph that compares the RMSD values between a wild-type and mutant trajectory. We define file paths for the DCDs that represent the wild-type and mutant trajectories, as well as the topology files for both (which represent the connectivity and identity of the atoms represented by the trajectory files).
+    </p>
+
+<pre><code><span class="kw">import</span> mdtraj <span class="kw">as</span> md
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">import</span> matplotlib.pyplot <span class="kw">as</span> plt
+<span class="kw">from</span> matplotlib.backends.backend_pdf <span class="kw">import</span> PdfPages
+
+WT_TRAJ  = <span class="str">"/path/to/wildtype_production.dcd"</span>
+MUT_TRAJ = <span class="str">"/path/to/mutant_production.dcd"</span>
+
+WT_TOP   = <span class="str">"/path/to/wildtype_topology.psf"</span>
+MUT_TOP  = <span class="str">"/path/to/mutant_topology.psf"</span>
+</code></pre>
+
+    <p>
+      Next, we define a function that allows us to compute RMSD. The frame_interval_ps defines the number of picoseconds each frame of the trajectory is sampled at (this is different for each trajectory depending on the molecular dynamics simulation). For my case, I used OpenMM to generate trajectories that had frames saved every 50 ps.
+    </p>
+
+<pre><code><span class="kw">def</span> <span class="fn">compute_rmsd</span>(traj_file, top_file, frame_interval_ps=<span class="str">50.0</span>, chunk_size=<span class="str">10</span>):
+
+    top    = md.<span class="fn">load_topology</span>(top_file)
+    ca     = top.<span class="fn">select</span>(<span class="str">"protein and name CA"</span>)
+    ref    = md.<span class="fn">load</span>(traj_file, top=top_file, frame=<span class="str">0</span>)
+    ref_ca = ref.<span class="fn">atom_slice</span>(ca)
+
+    rmsd_values   = []
+    time_values   = []
+    frame_counter = <span class="str">0</span>
+
+    <span class="kw">for</span> chunk <span class="kw">in</span> md.<span class="fn">iterload</span>(traj_file, top=top_file, chunk=chunk_size):
+        chunk = chunk.<span class="fn">atom_slice</span>(ca)
+        chunk.<span class="fn">superpose</span>(ref_ca)
+
+        rmsd_chunk = md.<span class="fn">rmsd</span>(chunk, ref_ca)
+
+        n       = chunk.n_frames
+        time_ps = np.<span class="fn">arange</span>(frame_counter, frame_counter + n) * frame_interval_ps
+        time_ns = time_ps / <span class="str">1000.0</span>
+
+        rmsd_values.<span class="fn">append</span>(rmsd_chunk)
+        time_values.<span class="fn">append</span>(time_ns)
+        frame_counter += n
+
+    <span class="kw">return</span> np.<span class="fn">concatenate</span>(time_values), np.<span class="fn">concatenate</span>(rmsd_values)
+</code></pre>
+
+    <p>
+      We load in the topology file using md.load_topology() and select only the protein backbone alpha carbons using top.select(). We then load in only the first frame of the trajectory as a reference (ref), and slice this frame to isolate only the alpha carbons in the reference frame (ref_ca).
+    </p>
+    <p>
+      Next, we use md.iterload() to progressively load in chunks of 10 frames each; we slice the chunks to isolate the alpha carbons. Prior to calculating the RMSD, we use chunk.superpose() to align the chunk to our reference. We then compute RMSD values, build out the time axis, and append both to rmsd_values and time_values. Both arrays are concatenated and returned.
+    </p>
+
+    <div class="callout" style="border-left-color: var(--highlight);">
+      <div class="callout-label" style="color: var(--highlight);">⚠️ Important Note</div>
+      <div style="font-size: 13px; color: var(--text-dim); line-height: 1.8;">
+        We must use md.superpose() before calculating any RMSDs! This is because we <em>generally</em> do NOT care about global translations or rotations of a protein when looking at RMSDs and only want to capture internal conformational changes. md.superpose() aligns each chunk with the reference frame and eliminates the effect of global translocations/rotations by minimizing RMSD without altering relative positions. Some libraries perform this alignment implicitly, but MDTraj does not.
+      </div>
+    </div>
+
+    <p>
+      Next, we call this function to obtain coupled arrays of time (in nanoseconds) and RMSD (with the reference frame being the first frame of the trajectory). We then graph this information using matplotlib, and save the graphs to a PDF using PdfPages.
+    </p>
+
+<pre><code>time_wt,  rmsd_wt  = <span class="fn">compute_rmsd</span>(WT_TRAJ,  WT_TOP)
+time_mut, rmsd_mut = <span class="fn">compute_rmsd</span>(MUT_TRAJ, MUT_TOP)
+
+fig, ax = plt.<span class="fn">subplots</span>(figsize=(<span class="str">8</span>, <span class="str">6</span>))
+
+ax.<span class="fn">plot</span>(time_wt,  rmsd_wt,  color=<span class="str">"steelblue"</span>,   linewidth=<span class="str">1</span>, label=<span class="str">"Wild-Type"</span>)
+ax.<span class="fn">plot</span>(time_mut, rmsd_mut, color=<span class="str">"lightskyblue"</span>, linewidth=<span class="str">1</span>, label=<span class="str">"Mutant"</span>)
+
+ax.<span class="fn">set_xlabel</span>(<span class="str">"Time (ns)"</span>)
+ax.<span class="fn">set_ylabel</span>(<span class="str">"RMSD (nm)"</span>)
+ax.<span class="fn">set_title</span>(<span class="str">"Protein Cα RMSD vs Time — Wild-Type vs Mutant"</span>)
+ax.<span class="fn">legend</span>()
+ax.<span class="fn">grid</span>(<span class="str">True</span>, alpha=<span class="str">0.3</span>)
+
+<span class="kw">with</span> <span class="fn">PdfPages</span>(<span class="str">"RMSD_WT_vs_Mutant.pdf"</span>) <span class="kw">as</span> pdf:
+    pdf.<span class="fn">savefig</span>(fig)
+
+plt.<span class="fn">close</span>(fig)
+</code></pre>
+
+    <p>And just like that, we have code that plots RMSD vs. time!</p>
+
+    <h2 id="rmsf-mdanalysis">Calculating RMSF with MDAnalysis</h2>
+    <h3 id="why-mdanalysis">Why Use MDAnalysis?</h3>
+    <p>
+      I use MDAnalysis rather than MDTraj for RMSF calculation — MDAnalysis is nice because it features lazy loading (we do not have to deal with memory issues), but despite this, MDAnalysis like MDTraj does not implicitly align frames to a reference when calculating RMSF, so this is something we must do ourselves.
+    </p>
+
+    <h3 id="what-is-rmsf">What Is RMSF?</h3>
+    <p>
+      RMSF is a measure of flexibility: it measures the average mobility or flexibility of residues or atoms (in this case, we will be using only alpha carbons to model the flexibility of residues) calculated as the time-average deviation of atoms from a reference position. In this example, we use alpha carbons and exclude side chains to measure backbone flexibility and reduce noise. Note that this approach is only appropriate when the flexibility of side chain atoms is not of interest: in cases where side chain flexibility is important, it might be helpful to calculate the average RMSF for all heavy atoms in a residue.
+    </p>
+
+    <div class="callout" style="border-left-color: var(--accent);">
+      <div class="callout-label">📐 Formula</div>
+      <div style="margin-bottom: 0.6rem; color: var(--text);">Root Mean Square Fluctuation (RMSF)</div>
+      <div style="text-align: center; padding: 1.2rem; background: var(--bg3); border: 1px solid var(--border); margin: 0.8rem 0; color: #e8f2ff;">
+        \[ \text{RMSF}(i) = \sqrt{\frac{1}{T} \sum_{t=1}^{T} \left\| r_i(t) - \langle r_i \rangle \right\|^2} \]
+      </div>
+      <div style="font-size: 12px; color: var(--text-dim); line-height: 1.8;">
+        where \(T\) is the total number of frames, \(r_i(t)\) is the position of residue \(i\) at time \(t\),
+        and \(\langle r_i \rangle\) is its time-averaged position over the trajectory.
+      </div>
+    </div>
+
+    <h2 id="rmsf-code">The Code — RMSF Calculation</h2>
+<p>Like in the previous example, we begin by setting up our imports and file paths: in this example, as in the last, we will practice by comparing the per-residue RMSF distributions for mutant and wild-type trajectories.</p>
+<pre><code><span class="kw">import</span> matplotlib.pyplot <span class="kw">as</span> plt
+<span class="kw">import</span> MDAnalysis <span class="kw">as</span> mda
+<span class="kw">from</span> MDAnalysis.analysis <span class="kw">import</span> rms, align
+<span class="kw">from</span> matplotlib.backends.backend_pdf <span class="kw">import</span> PdfPages
+
+WT_TOPO  = <span class="str">"/path/to/wildtype_topology.psf"</span>
+MUT_TOPO = <span class="str">"/path/to/mutant_topology.psf"</span>
+
+WT_TRAJ  = <span class="str">"/path/to/wildtype_production.dcd"</span>
+MUT_TRAJ = <span class="str">"/path/to/mutant_production.dcd"</span>
+</code></pre>
+
+
+<div class="callout" style="border-left-color: var(--highlight);">
+  <div class="callout-label" style="color: var(--highlight);">⚠️ Important Note</div>
+  <div style="font-size: 13px; color: var(--text-dim); line-height: 1.8;">
+    Note that in this example, unlike the last we use the <em>average structure</em> as the reference rather than the first frame; it makes sense to calculate time-average deviation from an average when measuring fluctuation, while when calculating RMSD it makes sense to calculate deviation from a starting structure (the first frame). The calculate_rmsf() function <em>does compare to the average structure implicitly but we still need a dedicated find_avg() function as we align all frames in the trajectory to the average prior to RMSF calculation to remove effects of rotation and translation.</em>
+  </div>
+</div>
+<p>
+  We build the find_avg() function which accepts an MDAnalysis.Universe object (u): universes are the core objects of MDAnalysis and represent a trajectory along with its corresponding topology. The find_avg function computes a average structure which we use for alignment. Averages are calculated for only protein backbone alpha carbons using our selection and returned as a Universe object.
+</p>
+<p>
+  We also create a perform_aligment() function to align trajectories to our average frame before doing RMSF calculations (much like we aligned to the first frame before doing RMSD calculations). The function takes in a target Universe (u), an average Universe (avg) and a filename to which the aligned trajectory is written (as a DCD file).
+</p>
+
+
+<div class="callout" style="border-left-color: var(--highlight);">
+  <div class="callout-label" style="color: var(--highlight);">⚠️ Important Note</div>
+  <div style="font-size: 13px; color: var(--text-dim); line-height: 1.8;">
+    The perform_aligment() function takes advantage of MDAnalysis's builtin streaming to avoid filling up memory - by setting in_memory to false, we sequentially load in frames to RAM and write aligned trajectories to the disk, and save the aligned trajectory to the disk, rather than putting all of it in RAM.
+  </div>
+</div>
+
+<p>MDAnalysis.
+  Finally, we write a calculate_rmsf() function; this takes in a filename (which points to our average-aligned trajectory) and topology file as inputs. It uses these inputs to create a new universe for the aligned trajectory, select the alpha carbons, and calculate the RMSF per-residue which is returned by the function. R is a MDAnalysis.rms.RMSF object, and the .rmsf attribute of this object is an array of RMSF values (for each alpha carbon).
+</p>
+
+
+<pre><code><span class="kw">def</span> <span class="fn">find_avg</span>(u):
+    avg = align.<span class="fn">AverageStructure</span>(
+        u, u,
+        select=<span class="str">"protein and name CA"</span>,
+        ref_frame=<span class="str">0</span>
+    ).<span class="fn">run</span>()
+    <span class="kw">return</span> avg.universe
+
+<span class="kw">def</span> <span class="fn">perform_alignment</span>(u, avg, fname):
+    align.<span class="fn">AlignTraj</span>(
+        u, avg,
+        select=<span class="str">'protein and name CA'</span>,
+        filename=fname,
+        in_memory=<span class="str">False</span>
+    ).<span class="fn">run</span>()
+
+<span class="kw">def</span> <span class="fn">calculate_rmsf</span>(fname, topo):
+    aligned_traj = mda.<span class="fn">Universe</span>(topo, fname)
+    c_alphas = aligned_traj.<span class="fn">select_atoms</span>(<span class="str">"protein and name CA"</span>)
+    R = rms.<span class="fn">RMSF</span>(c_alphas).<span class="fn">run</span>()
+    <span class="kw">return</span> R
+</code></pre>
+
+<p>We make the WT and mutant universes using the topology and trajectory files, and then run the functions we defined accordingly. We also select alpha carbons from the wild-type universe and get .resids to have a list of residue IDs (this will help for our plots!).</p>
+
+<pre><code><span class="cm"># wild-type</span>
+u_wt  = mda.<span class="fn">Universe</span>(WT_TOPO,  WT_TRAJ)
+<span class="fn">perform_alignment</span>(u_wt,  <span class="fn">find_avg</span>(u_wt),  <span class="str">"aligned_wt.dcd"</span>)
+rmsf_wt  = <span class="fn">calculate_rmsf</span>(<span class="str">"aligned_wt.dcd"</span>,  WT_TOPO)
+
+<span class="cm"># mutant</span>
+u_mut = mda.<span class="fn">Universe</span>(MUT_TOPO, MUT_TRAJ)
+<span class="fn">perform_alignment</span>(u_mut, <span class="fn">find_avg</span>(u_mut), <span class="str">"aligned_mut.dcd"</span>)
+rmsf_mut = <span class="fn">calculate_rmsf</span>(<span class="str">"aligned_mut.dcd"</span>, MUT_TOPO)
+
+<span class="cm"># residue IDs for the x-axis (taken from WT topology)</span>
+resids = u_wt.<span class="fn">select_atoms</span>(<span class="str">"protein and name CA"</span>).resids
+</code></pre>
+
+
+<p>Finally, we use the residue list for the x-axis and graph the RMSF by using the MDAnalysis.rms.RMSF objects (wt_rmsf and mut_rmsf): the .rmsf attribute of these objects contains an array of RMSFs for each alpha carbon (corresponding to the residues on the x-axis). We then use the matplotlib to plot and save!</p>
+<pre><code>fig, ax = plt.<span class="fn">subplots</span>(figsize=(<span class="str">8</span>, <span class="str">6</span>))
+
+ax.<span class="fn">plot</span>(resids, rmsf_wt.rmsf,  color=<span class="str">"steelblue"</span>,   linewidth=<span class="str">1</span>, label=<span class="str">"Wild-Type"</span>)
+ax.<span class="fn">plot</span>(resids, rmsf_mut.rmsf, color=<span class="str">"lightskyblue"</span>, linewidth=<span class="str">1</span>, label=<span class="str">"Mutant"</span>)
+
+ax.<span class="fn">set_xlabel</span>(<span class="str">"Residue Number"</span>)
+ax.<span class="fn">set_ylabel</span>(<span class="str">"RMSF (Å)"</span>)
+ax.<span class="fn">set_title</span>(<span class="str">"Per-Residue Cα RMSF — Wild-Type vs Mutant"</span>)
+ax.<span class="fn">legend</span>()
+ax.<span class="fn">grid</span>(<span class="str">True</span>, alpha=<span class="str">0.3</span>)
+
+<span class="kw">with</span> <span class="fn">PdfPages</span>(<span class="str">"RMSF_WT_vs_Mutant.pdf"</span>) <span class="kw">as</span> pdf:
+    pdf.<span class="fn">savefig</span>(fig)
+
+plt.<span class="fn">close</span>(fig)
+</code></pre>
+
+<p>And that's it! Functional code for calculating RMSF and RMSD - I hope this tutorial was helpful and a bit easier to understand than parsing through the documentation for these packages.</p>
+
+  </article>
+
+  <aside class="article-sidebar">
+    <div class="sidebar-box">
+      <h4>Table of Contents</h4>
+      <ul class="toc-list">
+        <li><a href="#rmsd-mdtraj">Calculating RMSD with MDTraj</a></li>
+        <li><a href="#what-is-rmsd" class="toc-sub">What is RMSD?</a></li>
+        <li><a href="#memory-problem" class="toc-sub">The Memory Problem</a></li>
+        <li><a href="#rmsd-code" class="toc-sub">The Code — RMSD</a></li>
+        <li><a href="#rmsf-mdanalysis">Calculating RMSF with MDAnalysis</a></li>
+        <li><a href="#why-mdanalysis" class="toc-sub">Why Use MDAnalysis?</a></li>
+        <li><a href="#what-is-rmsf" class="toc-sub">What is RMSF?</a></li>
+        <li><a href="#rmsf-code" class="toc-sub">The Code — RMSF</a></li>
+      </ul>
+    </div>
+
+    <div class="sidebar-box">
+      <h4>Related Posts</h4>
+      <a href="post.html" class="related-post">
+        <div class="rp-title">Sequence-to-Function with Transformers: Lessons from ESM-2</div>
+        <div class="rp-date">Jan 30, 2025</div>
+      </a>
+      <a href="post.html" class="related-post">
+        <div class="rp-title">Cryo-EM at 1 Å: The Resolution Revolution Is Ongoing</div>
+        <div class="rp-date">Nov 7, 2024</div>
+      </a>
+      <a href="post.html" class="related-post">
+        <div class="rp-title">Building a Mass Spec Pipeline in Python</div>
+        <div class="rp-date">Jan 15, 2025</div>
+      </a>
+    </div>
+
+    <div class="sidebar-box">
+      <h4>Newsletter</h4>
+      <p style="font-size:12px; color:var(--text-dim); margin-bottom:1rem;">Get posts like this in your inbox.</p>
+      <div style="display:flex; flex-direction:column; gap:8px;">
+        <input class="nl-input" type="email" placeholder="your@email.com" style="border-right:1px solid var(--border-bright); padding:10px 14px;">
+        <button class="nl-btn" style="width:100%;">Subscribe</button>
+      </div>
+    </div>
+  </aside>
+</div>
+
+<footer>
+  <p>© 2026 SequenceSpace — Computational Biology Blog</p>
+  <div class="footer-links">
+    <a href="https://www.linkedin.com/in/arjun-deshpande-a581a8300/" target="_blank">LinkedIn</a>
+    <a href="https://github.com/arjundeshx" target="_blank">GitHub</a>
+    <a href="mailto:arjundeshx@gmail.com">Contact</a>
+  </div>
+</footer>
+
+<script src="shared.js"></script>
+<script>
+  buildDna('dnaStrip1');
+  initNewsletter();
+</script>
+</body>
+</html>
