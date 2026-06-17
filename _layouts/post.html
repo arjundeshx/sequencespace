@@ -1,0 +1,77 @@
+---
+layout: default
+---
+
+{% assign cat = page.category | default: page.categories[0] %}
+
+<header class="post-header">
+  <div class="post-header-inner">
+    <div class="post-meta">
+      {% include tag.html category=cat %}
+      <span class="dot">·</span>
+      <time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%B %-d, %Y" }}</time>
+      {% if page.reading_time %}
+      <span class="dot">·</span>
+      <span>{{ page.reading_time }} min read</span>
+      {% else %}
+      <span class="dot">·</span>
+      <span>{% include reading_time.html content=content %}</span>
+      {% endif %}
+      {% if page.author %}
+      <span class="dot">·</span>
+      <span>{{ page.author }}</span>
+      {% endif %}
+    </div>
+
+    <h1 class="post-title">{{ page.title }}</h1>
+
+    {% if page.excerpt_custom %}
+    <p class="post-excerpt">{{ page.excerpt_custom }}</p>
+    {% elsif page.description %}
+    <p class="post-excerpt">{{ page.description }}</p>
+    {% endif %}
+  </div>
+</header>
+
+<div class="post-body-wrap">
+
+  {% if page.toc %}
+  {% include toc.html %}
+  {% endif %}
+
+  <article class="prose">
+    {{ content }}
+  </article>
+
+  <!-- Tags -->
+  {% if page.tags.size > 0 %}
+  <div class="post-tags">
+    <span class="tag-label">Tagged:</span>
+    {% for tag in page.tags %}
+    <a href="{{ '/tags/' | append: tag | append: '/' | prepend: site.baseurl }}" class="post-tag-item">{{ tag }}</a>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <!-- Related posts -->
+  {% assign related = site.posts | where: "category", cat | where_exp: "p", "p.url != page.url" | limit: 3 %}
+  {% if related.size > 0 %}
+  <div class="related-posts">
+    <h4>More in {{ cat | capitalize }}</h4>
+    <ul>
+      {% for rpost in related %}
+      <li>
+        <a href="{{ rpost.url | prepend: site.baseurl }}">{{ rpost.title }}</a>
+        <br><small style="font-family:var(--mono);font-size:0.68rem;color:var(--meta);">{{ rpost.date | date: "%b %-d, %Y" }}</small>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+
+  <!-- Back link -->
+  <div style="margin-top:2.5rem;padding-top:1.5rem;border-top:1px solid var(--border);">
+    <a href="{{ '/' | prepend: site.baseurl }}" class="read-more" style="gap:0.35rem;flex-direction:row-reverse;">← Back to all posts</a>
+  </div>
+
+</div>

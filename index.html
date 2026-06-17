@@ -1,0 +1,171 @@
+---
+layout: default
+title: Home
+---
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-eyebrow">Computational Biology</div>
+    <h1 class="hero-title">
+      Where <em>algorithms</em> meet<br>
+      living systems
+    </h1>
+    <p class="hero-sub">
+      Research breakdowns, hands-on coding tutorials, and commentary on how
+      computational biology is reshaping science and society.
+    </p>
+    <div class="hero-actions">
+      <a href="#latest" class="btn btn-primary">Read latest posts</a>
+      <a href="{{ '/about/' | prepend: site.baseurl }}" class="btn btn-ghost">About this blog</a>
+    </div>
+  </div>
+
+  <!-- DNA decoration -->
+  <svg class="dna-bg" width="340" height="500" viewBox="0 0 340 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+    {% for i in (0..12) %}
+      {% assign y = i | times: 38 | plus: 20 %}
+      {% assign phase = i | modulo: 2 %}
+      {% if phase == 0 %}
+        <ellipse cx="90" cy="{{ y }}" rx="70" ry="14" stroke="white" stroke-width="1.5" opacity="0.6"/>
+        <ellipse cx="250" cy="{{ y }}" rx="70" ry="14" stroke="white" stroke-width="1.5" opacity="0.6"/>
+        <line x1="90" y1="{{ y }}" x2="250" y2="{{ y }}" stroke="white" stroke-width="1" opacity="0.3"/>
+      {% else %}
+        <ellipse cx="170" cy="{{ y }}" rx="70" ry="14" stroke="white" stroke-width="1.5" opacity="0.4"/>
+      {% endif %}
+    {% endfor %}
+  </svg>
+</section>
+
+
+<!-- LATEST POSTS -->
+<section class="posts-section" id="latest">
+  <div class="container">
+
+    <div class="section-header">
+      <span class="section-title">// Latest</span>
+      <a href="{{ '/archive/' | prepend: site.baseurl }}" class="section-link">All posts →</a>
+    </div>
+
+    <!-- Featured post (most recent) -->
+    {% assign featured = site.posts.first %}
+    {% assign featured_cat = featured.category | default: featured.categories[0] %}
+    <a href="{{ featured.url | prepend: site.baseurl }}" class="post-featured" style="text-decoration:none;color:inherit;display:grid;">
+      <div class="post-featured-body">
+        <div class="post-meta">
+          {% include tag.html category=featured_cat %}
+          <span class="dot">·</span>
+          <time datetime="{{ featured.date | date_to_xmlschema }}">{{ featured.date | date: "%B %-d, %Y" }}</time>
+        </div>
+        <h2 class="post-title" style="font-size:1.75rem;">{{ featured.title }}</h2>
+        <p class="post-excerpt" style="-webkit-line-clamp:4;">
+          {% if featured.description %}{{ featured.description }}{% else %}{{ featured.excerpt | strip_html }}{% endif %}
+        </p>
+        <span class="read-more">Read article</span>
+      </div>
+      <div class="post-featured-image">
+        {% if featured.image %}
+          <img src="{{ featured.image | prepend: site.baseurl }}" alt="{{ featured.title }}">
+        {% else %}
+          <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" opacity="0.3">
+            <circle cx="40" cy="40" r="36" stroke="#3EB8A0" stroke-width="2"/>
+            <path d="M20 40 Q30 25 40 40 Q50 55 60 40" stroke="#3EB8A0" stroke-width="2" fill="none"/>
+            <path d="M20 40 Q30 55 40 40 Q50 25 60 40" stroke="#E8A44A" stroke-width="2" fill="none"/>
+            <line x1="20" y1="40" x2="60" y2="40" stroke="white" stroke-width="0.5" stroke-dasharray="3 3"/>
+          </svg>
+        {% endif %}
+      </div>
+    </a>
+
+    <!-- Grid of next posts -->
+    {% assign grid_posts = site.posts | offset: 1 | limit: 6 %}
+    {% if grid_posts.size > 0 %}
+    <div class="post-grid" style="margin-top:1.5rem;">
+      {% for post in grid_posts %}
+        {% include post_card.html post=post %}
+      {% endfor %}
+    </div>
+    {% endif %}
+
+  </div>
+</section>
+
+
+<!-- CATEGORY OVERVIEW STRIP -->
+<div class="categories-strip">
+  <div class="container">
+
+    <!-- Research -->
+    <div class="category-block">
+      <div class="category-block-header">
+        <div class="category-block-icon icon-research">🔬</div>
+        <div>
+          <div class="category-block-title">Research</div>
+          <div class="category-block-desc">Paper breakdowns & new findings</div>
+        </div>
+      </div>
+      {% assign research_posts = site.posts | where: "category", "research" | limit: 4 %}
+      <ul class="category-post-list">
+        {% for post in research_posts %}
+        <li class="category-post-item">
+          <a href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
+          <span class="category-post-date">{{ post.date | date: "%b %-d, %Y" }}</span>
+        </li>
+        {% endfor %}
+        {% if research_posts.size == 0 %}
+        <li class="category-post-item" style="color:rgba(255,255,255,0.25);font-family:var(--sans);font-size:0.85rem;">Posts coming soon</li>
+        {% endif %}
+      </ul>
+      <a href="{{ '/research/' | prepend: site.baseurl }}" class="category-all-link">All research posts →</a>
+    </div>
+
+    <!-- Tutorials -->
+    <div class="category-block">
+      <div class="category-block-header">
+        <div class="category-block-icon icon-tutorial">⌨️</div>
+        <div>
+          <div class="category-block-title">Tutorials</div>
+          <div class="category-block-desc">Coding walkthroughs & tools</div>
+        </div>
+      </div>
+      {% assign tutorial_posts = site.posts | where: "category", "tutorial" | limit: 4 %}
+      <ul class="category-post-list">
+        {% for post in tutorial_posts %}
+        <li class="category-post-item">
+          <a href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
+          <span class="category-post-date">{{ post.date | date: "%b %-d, %Y" }}</span>
+        </li>
+        {% endfor %}
+        {% if tutorial_posts.size == 0 %}
+        <li class="category-post-item" style="color:rgba(255,255,255,0.25);font-family:var(--sans);font-size:0.85rem;">Posts coming soon</li>
+        {% endif %}
+      </ul>
+      <a href="{{ '/tutorials/' | prepend: site.baseurl }}" class="category-all-link">All tutorials →</a>
+    </div>
+
+    <!-- Commentary -->
+    <div class="category-block">
+      <div class="category-block-header">
+        <div class="category-block-icon icon-commentary">💬</div>
+        <div>
+          <div class="category-block-title">Commentary</div>
+          <div class="category-block-desc">Comp bio in society & culture</div>
+        </div>
+      </div>
+      {% assign commentary_posts = site.posts | where: "category", "commentary" | limit: 4 %}
+      <ul class="category-post-list">
+        {% for post in commentary_posts %}
+        <li class="category-post-item">
+          <a href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
+          <span class="category-post-date">{{ post.date | date: "%b %-d, %Y" }}</span>
+        </li>
+        {% endfor %}
+        {% if commentary_posts.size == 0 %}
+        <li class="category-post-item" style="color:rgba(255,255,255,0.25);font-family:var(--sans);font-size:0.85rem;">Posts coming soon</li>
+        {% endif %}
+      </ul>
+      <a href="{{ '/commentary/' | prepend: site.baseurl }}" class="category-all-link">All commentary →</a>
+    </div>
+
+  </div>
+</div>

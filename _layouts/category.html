@@ -1,0 +1,33 @@
+---
+layout: default
+---
+
+<header class="archive-header">
+  <div class="archive-header-inner">
+    <div style="margin-bottom:0.75rem;">{% include tag.html category=page.category_id %}</div>
+    <h1 class="archive-title">{{ page.title }}</h1>
+    <p class="archive-desc">{{ page.description }}</p>
+  </div>
+</header>
+
+{% assign cat_posts = site.posts | where: "category", page.category_id %}
+
+<div class="archive-list">
+  {% if cat_posts.size == 0 %}
+    <p style="color:var(--meta);font-family:var(--sans);">No posts yet in this category — check back soon.</p>
+  {% else %}
+    {% for post in cat_posts %}
+    <div class="archive-item">
+      <span class="archive-date">{{ post.date | date: "%b %-d, %Y" }}</span>
+      <div>
+        <h2 class="archive-item-title">
+          <a href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
+        </h2>
+        <div class="archive-item-meta">
+          {% if post.description %}{{ post.description | truncate: 120 }}{% else %}{{ post.excerpt | strip_html | truncate: 120 }}{% endif %}
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  {% endif %}
+</div>

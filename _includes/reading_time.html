@@ -1,0 +1,7 @@
+{% assign words = include.content | number_of_words %}
+{% if words < 200 %}1 min read
+{% elsif words < 500 %}2 min read
+{% elsif words < 1000 %}4 min read
+{% elsif words < 1500 %}6 min read
+{% else %}{{ words | divided_by: 250 }} min read
+{% endif %}

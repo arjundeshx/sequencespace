@@ -1,0 +1,20 @@
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div>
+      <div class="footer-brand"><span class="logo-accent">//</span> {{ site.title | downcase }}</div>
+      <div class="footer-tagline">{{ site.tagline }}</div>
+    </div>
+    <ul class="footer-links">
+      <li><a href="{{ '/research/' | prepend: site.baseurl }}">Research</a></li>
+      <li><a href="{{ '/tutorials/' | prepend: site.baseurl }}">Tutorials</a></li>
+      <li><a href="{{ '/commentary/' | prepend: site.baseurl }}">Commentary</a></li>
+      <li><a href="{{ '/about/' | prepend: site.baseurl }}">About</a></li>
+      <li><a href="{{ '/feed.xml' | prepend: site.baseurl }}">RSS</a></li>
+      {% if site.author.github %}<li><a href="https://github.com/{{ site.author.github }}" target="_blank">GitHub</a></li>{% endif %}
+      {% if site.author.twitter %}<li><a href="https://twitter.com/{{ site.author.twitter }}" target="_blank">Twitter</a></li>{% endif %}
+    </ul>
+  </div>
+  <div class="footer-copy">
+    © {{ site.time | date: "%Y" }} {{ site.author.name }} · Built with Jekyll · Hosted on GitHub Pages
+  </div>
+</footer>
