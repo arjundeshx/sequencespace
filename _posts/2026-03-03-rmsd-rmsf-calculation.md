@@ -95,7 +95,7 @@ Like when calculating RMSD, the frames of the trajectory must first be aligned t
 ## Memory Issues with MDAnalysis
 While MDAnalysis does not load entire trajectories to memory, the **`perform_alignment()`** function stores the algined trajectory in memory by default. To avoid this, we set parameter in_memory=false and save the aligned trajectory to disk by specifying a temporary filename. We can later delete this temporary file.
 
-# Code for Finding the Average Structure
+## Code for Finding the Average Structure
 ```python
 def find_avg(u):
     # compute avg structure of alpha carbons in a protein
@@ -107,7 +107,7 @@ def find_avg(u):
     return avg.universe
 ```
 
-# Aligning the Trajectory to Reference
+## Aligning the Trajectory to Reference
 Next, we create a function for aligning the trajectory to the average structure and writing the resulting aligned trajectory to a filename **`fname`**.
 
 ```python
@@ -119,7 +119,7 @@ def perform_alignment(u, avg, fname):
     filename=fname).run()
 ```
 
-# Code for RMSF Computation
+## Code for RMSF Computation
 Finally, we make a function to calculate RMSF and utilize the functions that we have created thus far.
 
 ```python
