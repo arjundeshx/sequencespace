@@ -5,7 +5,8 @@ date: 2026-03-03
 category: tutorial
 description: "A practical introduction to generating RMSD and RMSF plots from molecular dynamics trajectories and performing alignment in a memory-efficient manner using the MDTraj and MDAnalysis Python libraries."
 tags: [structural biology, python, molecular dynamics, biophysics, tutorial]
-author: Arjun Deshpande 
+author: Arjun Deshpande
+math: true
 ---
 
 When analyzing large molecular dynamics (MD) trajectories, it can be difficult to make sense of the data. The easiest and simplest ways to get started analyzing and comparing the movement of proteins is by generating plots for root mean square deviation (RMSD) and per-residue root mean square fluctuation (RMSF).
@@ -85,7 +86,9 @@ plt.close()
 
 ## What is RMSF?
 
-Raw data contains empty droplets, dead cells, and doublets. We filter these out using three metrics:
+RMSF is a measure of flexibility: it measures the average mobility or flexibility of an atom group (in this example, we will be using only alpha carbons to model the flexibility of residues); it is the time-average deviation atoms from a reference position; this approach is only appropriate when the flexibility of side chain atoms is not of interest; when side chain atoms are important, it may be helpful to calculate the average RMSF for all heavy atoms ina  residue.
+
+RMSF is calculated using the following formula: \[ \text{RMSF}(i) = \sqrt{\frac{1}{T} \sum_{t=1}^{T} \left\| r_i(t) - \langle r_i \rangle \right\|^2} \] where \(T\) is the total number of frames, \(r_i(t)\) is the position of the alpha carbon of residue \(i\) at time \(t\), and \(\langle r_i \rangle\) is its time-averaged position over the trajectory. As you can see, the reference from which deviation is calculated in RMSF is typically the average of the entire trajectory.
 
 - **`n_genes_by_counts`** — number of genes detected per cell (low = empty or dead)
 - **`total_counts`** — total UMI count per cell
