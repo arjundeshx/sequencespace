@@ -12,15 +12,13 @@ When analyzing large molecular dynamics (MD) trajectories, it can be difficult t
 
 **Prerequisites:** Python 3.9+, basic familiarity with NumPy/pandas, and a basic understanding of molecular dynamics trajectory and topology data.
 
-# RMSD vs. Time Plot Generation with MDTraj
-
 ## What is RMSD?
 
 RMSD is a measure of the distance from a conformation of a biomolecule (e.g a protein) from a reference structure. RMSD calculations measure the three dimensional distance between reference atoms and atoms in a particular frame, aggregating the squares of distances across all atom pairs and obtaining the square root (eliminating any negative movements; RMSD is unsigned). **RMSD is useful in evaluating conformational changes in proteins throughout simulations;** different conformations typically appear as different plateaus on a RMSD vs. time graph.
 
 ## Memory Issues with MDTraj
 
-By default, MDTraj loads in the entire trajectory to system RAM (when using function md.load()) - this is problematic for most systems are trajectories are often too large in size to be stored in the system memory. The md.iterload() method can be used to load trajectories in chunks to avoid filling out the memory.
+By default, MDTraj loads in the entire trajectory to system RAM (when using function **`md.load()`**) - this is problematic for most systems are trajectories are often too large in size to be stored in the system memory. The **`md.iterload()`** method can be used to load trajectories in chunks to avoid filling out the memory.
 
 ## Code for RMSD Calculation
 We begin by importing necessary libraries and defining paths for a MD trajectory and its associated topology.
@@ -35,7 +33,7 @@ example_topology = "/path/to/example_top.psf"
 
 Next, we build a compute RMSD function; the frame_interval_ps parameter defines the interval at which frames are appended to DCD file (used to convert frames to time); when running MD simulations with OpenMM, this parameter is specified when creating a DCDReporter object. 
 
-This function computes RMSD for the alpha carbons of a protein (which are specified witht the .select() and .atom_slice() methods) - RMSD is computed with respect a reference structure, which in this case is set to the first frame of the DCD file. In order to eliminate the influence of global translation and rotation on RMSD **each frame must be aligned to the reference alpha carbons before RMSD is calculated**, which is achieved with the .superpose() method.
+This function computes RMSD for the alpha carbons of a protein (which are specified witht the **`.select()`** and **`.atom_slice()`** methods) - RMSD is computed with respect a reference structure, which in this case is set to the first frame of the DCD file. In order to eliminate the influence of global translation and rotation on RMSD **each frame must be aligned to the reference alpha carbons before RMSD is calculated**, which is achieved with the **`.superpose()`** method.
 
 ```python
 def compute_rmsd(traj_file, top_file, frame_interval_ps=50.0, chunk_size=10):
@@ -85,7 +83,7 @@ plt.savefig("rmsd_vs_time.png", dpi=300)
 plt.close()
 ```
 
-# Calculating Per-Residue RMSF with MDAnalysis
+## What is RMSF?
 
 Raw data contains empty droplets, dead cells, and doublets. We filter these out using three metrics:
 
