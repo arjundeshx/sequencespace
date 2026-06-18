@@ -1,14 +1,14 @@
-title: "Sequence Space"
+title: "SequenceSpace"
 tagline: "Computational biology — research, code, and commentary"
 description: "A semi-technical blog covering new research in computational biology, coding tutorials, and commentary on comp bio in society."
 author:
-  name: "Your Name"
+  name: "Arjun Deshpande"
   email: "you@example.com"
-  twitter: "yourhandle"
-  github: "yourgithub"
+  instagram: "arjun645728"
+  github: "arjundeshx"
 
-baseurl: ""  # Set to "/repo-name" if hosting at username.github.io/repo-name
-url: "https://yourusername.github.io"
+baseurl: "/sequencespace"  # Set to "/repo-name" if hosting at username.github.io/repo-name
+url: "https://arjundeshx.github.io"
 
 # Build
 markdown: kramdown
