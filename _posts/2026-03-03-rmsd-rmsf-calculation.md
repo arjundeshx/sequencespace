@@ -88,135 +88,76 @@ plt.close()
 
 RMSF is a measure of flexibility: it measures the average mobility or flexibility of an atom group (in this example, we will be using only alpha carbons to model the flexibility of residues); it is the time-average deviation atoms from a reference position; this approach is only appropriate when the flexibility of side chain atoms is not of interest; when side chain atoms are important, it may be helpful to calculate the average RMSF for all heavy atoms ina  residue.
 
-RMSF is calculated using the following formula: $$\text{RMSF}(i) = \sqrt{\frac{1}{T} \sum_{t=1}^{T} \left\| r_i(t) - \langle r_i \rangle \right\|^2}$$ where $$T$$ is the total number of frames, $$r_i(t)$$ is the position of the alpha carbon of residue $$i$$ at time $$\(t\)$$, and $$\langle r_i \rangle$$ is its time-averaged position over the trajectory. As you can see, the reference from which deviation is calculated in RMSF is typically the average of the entire trajectory.
+RMSF is calculated using the following formula: $$\text{RMSF}(i) = \sqrt{\frac{1}{T} \sum_{t=1}^{T} \left\| r_i(t) - \langle r_i \rangle \right\|^2}$$ where $$T$$ is the total number of frames, $$r_i(t)$$ is the position of the alpha carbon of residue $$i$$ at time $$\(t\)$$, and $$\langle r_i \rangle$$ is its time-averaged position over the trajectory. As you can see, the reference from which deviation is calculated in RMSF is typically the **average of the entire trajectory** unlike in the last example in which we used the first frame as reference.
 
-- **`n_genes_by_counts`** — number of genes detected per cell (low = empty or dead)
-- **`total_counts`** — total UMI count per cell
-- **`pct_counts_mt`** — percentage of counts from mitochondrial genes (high = apoptotic cell)
+Like when calculating RMSD, the frames of the trajectory must first be aligned to the reference (average) structure.
 
+## Memory Issues with MDAnalysis
+While MDAnalysis does not load entire trajectories to memory, the **`perform_alignment()`** function stores the algined trajectory in memory by default. To avoid this, we set parameter in_memory=false and save the aligned trajectory to disk by specifying a temporary filename. We can later delete this temporary file.
+
+# Code for Finding the Average Structure
 ```python
-# Mark mitochondrial genes
-adata.var['mt'] = adata.var_names.str.startswith('MT-')
+def find_avg(u):
+    # compute avg structure of alpha carbons in a protein
+    avg = align.AverageStructure(
+    u, u,
+    select="protein and name CA"),
+    ref_frame=0).run()
 
-# Calculate QC metrics
-sc.pp.calculate_qc_metrics(
-    adata,
-    qc_vars=['mt'],
-    percent_top=None,
-    log1p=False,
-    inplace=True
-)
-
-# Visualize distributions
-sc.pl.violin(adata, ['n_genes_by_counts', 'total_counts', 'pct_counts_mt'],
-             jitter=0.4, multi_panel=True)
+    return avg.universe
 ```
 
-Filter based on what you see (adjust thresholds for your data):
+# Aligning the Trajectory to Reference
+Next, we create a function for aligning the trajectory to the average structure and writing the resulting aligned trajectory to a filename **`fname`**.
 
 ```python
-adata = adata[adata.obs.n_genes_by_counts > 200, :]
-adata = adata[adata.obs.n_genes_by_counts < 2500, :]
-adata = adata[adata.obs.pct_counts_mt < 5, :]
+def perform_alignment(u, avg, fname):
+    align.AlignTraj(
+    u, avg,
+    select="protein and name CA",
+    in_memory=False,
+    filename=fname).run()
 ```
 
-## Normalization
-
-Single-cell counts are confounded by sequencing depth — a cell with 10k UMIs will appear to express everything at higher levels than one with 2k UMIs, even if the underlying biology is identical. We normalize:
+# Code for RMSF Computation
+Finally, we make a function to calculate RMSF and utilize the functions that we have created thus far.
 
 ```python
-# Normalize to 10,000 counts per cell (library-size normalization)
-sc.pp.normalize_total(adata, target_sum=1e4)
+def calculate_rmsf(fname, topo):
+     # create a universe out of the aligned trajectory that has been written to disk
+    aligned_traj = mda.Universe(topo, fname)
+    c_alphas = aligned_traj.select_atoms("protein and name CA")
+    R = rms.RMSF(c_alphas).run()
+    return R
 
-# Log-transform: log(x + 1)
-sc.pp.log1p(adata)
+# creates example universe
+u = mda.Universe(example_topology, example_trajectory)
 
-# Save the normalized matrix before feature selection
-adata.raw = adata
+# writes trajectory aligned to average to aligned_example.dcd
+perform_alignment(u, find_avg(u), "aligned_example.dcd")
+
+# uses calculate_rmsf on the aligned trajectory
+rmsf_values = calculate_rmsf("aligned_example.dcd", example_topology)
 ```
 
-The log transformation stabilizes variance and pulls the distribution closer to normal — a requirement for many downstream statistical methods.
-
-## Feature selection
-
-We don't need all 33k genes. We select **highly variable genes (HVGs)** — those with more variation across cells than we'd expect by chance — to focus on informative signal:
+We then obtain the residue IDs for each alpha carbon from the topology (parallel to the RMSF array) and plot our results by creating a per-residue alpha carbon RMSF graph.
 
 ```python
-sc.pp.highly_variable_genes(adata, min_mean=0.0125, max_mean=3, min_disp=0.5)
+resids = u.select_atoms("protein and name CA").resids
 
-print(f"Number of HVGs: {adata.var.highly_variable.sum()}")
-# Number of HVGs: 1838
+plt.figure()
+plt.plot(resids, rmsf_values)
+plt.xlabel("Residue Number")
+plt.ylabel("RMSF (Å)")
+plt.title("Per-Residue Cα RMSF")
 
-sc.pl.highly_variable_genes(adata)
-
-# Subset to HVGs for PCA
-adata = adata[:, adata.var.highly_variable]
+plt.tight_layout()
+plt.savefig("per_residue_rmsf.png", dpi=300)
+plt.close()
 ```
 
-## Dimensionality reduction
-
-### PCA
-
-scRNA-seq data lives in ~20,000-dimensional space. We reduce it first with PCA:
-
-```python
-sc.pp.regress_out(adata, ['total_counts', 'pct_counts_mt'])
-sc.pp.scale(adata, max_value=10)
-
-sc.tl.pca(adata, svd_solver='arpack')
-sc.pl.pca_variance_ratio(adata, log=True)
-```
-
-### UMAP
-
-PCA captures the top linear axes of variation. For visualization, UMAP (Uniform Manifold Approximation and Projection) gives a 2D embedding that preserves local structure:
-
-```python
-sc.pp.neighbors(adata, n_neighbors=10, n_pcs=40)
-sc.tl.umap(adata)
-sc.pl.umap(adata, color=['CST3', 'NKG7', 'PPBP'])  # marker genes
-```
-
-## Clustering
-
-We use the Leiden algorithm (a refined version of Louvain) on the neighbor graph:
-
-```python
-sc.tl.leiden(adata, resolution=0.5)
-sc.pl.umap(adata, color=['leiden'], legend_loc='on data')
-```
-
-## Finding marker genes
-
-For each cluster, find genes that are highly expressed there but not in other clusters:
-
-```python
-sc.tl.rank_genes_groups(adata, 'leiden', method='wilcoxon')
-sc.pl.rank_genes_groups(adata, n_genes=10, sharey=False)
-```
-
-This gives you a ranked list per cluster. You can then cross-reference with known cell-type markers (e.g., `CD3D` for T cells, `MS4A1` for B cells, `CST3` for monocytes) to assign biological identities.
-
-## Saving your work
-
-```python
-adata.write('pbmc3k_analyzed.h5ad')
-
-# Load later with:
-# adata = sc.read('pbmc3k_analyzed.h5ad')
-```
-
-## Next steps
-
-From here, the natural directions are:
-
-- **Trajectory analysis** with PAGA or Monocle3 — ordering cells along developmental paths
-- **Doublet detection** with Scrublet or DoubletFinder before QC
-- **Batch correction** with Harmony or scVI for multi-sample studies
-- **Differential expression** between conditions using pseudo-bulk methods (DESeq2 via PyDESeq2)
-
-The Scanpy documentation has excellent tutorials on each of these. The [single-cell best practices book](https://www.sc-best-practices.org/) (Theis lab) is also indispensable.
+And that's it! Functional code for calculating RMSF and RMSD - I hope this tutorial was helpful and a bit easier to understand than parsing through the documentation for these packages.
 
 ---
 
-*All code tested with Scanpy 1.10, AnnData 0.10, Python 3.11.*
+*All code tested with MDTraj 1.11.1, MDAnalysis 2.9.0, Python 3.11.*
