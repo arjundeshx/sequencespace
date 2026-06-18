@@ -1,16 +1,14 @@
 {% assign post = include.post %}
 {% assign cat = post.category | default: post.categories[0] %}
-<article class="post-card">
-  <div class="post-meta" style="margin-bottom:0.75rem;">
-    {% include tag.html category=cat %}
-    <span class="dot">·</span>
-    <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%b %-d, %Y" }}</time>
-  </div>
-  <h2 class="post-title">
-    <a href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
-  </h2>
+<a href="{{ post.url | prepend: site.baseurl }}" class="post-card">
+  <div>{% include tag.html category=cat %}</div>
+  <div class="post-title">{{ post.title }}</div>
   <p class="post-excerpt">
     {% if post.description %}{{ post.description }}{% else %}{{ post.excerpt | strip_html }}{% endif %}
   </p>
-  <a href="{{ post.url | prepend: site.baseurl }}" class="read-more">Read</a>
-</article>
+  <div class="card-meta">
+    <span>{{ post.date | date: "%b %-d, %Y" }}</span>
+    {% capture rt %}{% if post.reading_time %}{{ post.reading_time }} min read{% else %}{% include reading_time.html content=post.content %}{% endif %}{% endcapture %}
+    <span>{{ rt | strip | replace: ' read', '' }}</span>
+  </div>
+</a>

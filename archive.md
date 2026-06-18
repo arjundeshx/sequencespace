@@ -14,9 +14,7 @@ permalink: /archive/
 <div class="archive-list">
   {% assign posts_by_year = site.posts | group_by_exp: "post", "post.date | date: '%Y'" %}
   {% for year_group in posts_by_year %}
-  <div style="margin-bottom:0.5rem;">
-    <span style="font-family:var(--mono);font-size:0.7rem;color:var(--meta);letter-spacing:0.1em;text-transform:uppercase;">{{ year_group.name }}</span>
-  </div>
+  <div class="archive-year">{{ year_group.name }}</div>
   {% for post in year_group.items %}
   {% assign cat = post.category | default: post.categories[0] %}
   <div class="archive-item">
@@ -37,6 +35,6 @@ permalink: /archive/
   {% endfor %}
 
   {% if site.posts.size == 0 %}
-  <p style="color:var(--meta);font-family:var(--sans);">No posts yet. Check back soon!</p>
+  <p style="color:var(--text-dimmer);">No posts yet. Check back soon!</p>
   {% endif %}
 </div>

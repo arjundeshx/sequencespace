@@ -1,10 +1,10 @@
 {% assign cat = include.category %}
 {% if cat == 'research' %}
-  <span class="tag tag-research">🔬 Research</span>
+  <span class="post-tag tag-research">Research</span>
 {% elsif cat == 'tutorial' %}
-  <span class="tag tag-tutorial">⌨️ Tutorial</span>
+  <span class="post-tag tag-tutorial">Tutorial</span>
 {% elsif cat == 'commentary' %}
-  <span class="tag tag-commentary">💬 Commentary</span>
+  <span class="post-tag tag-commentary">Commentary</span>
 {% else %}
-  <span class="tag" style="background:rgba(107,122,141,0.12);color:#4a5568;">{{ cat }}</span>
+  <span class="post-tag" style="color:var(--text-dimmer);border-color:var(--text-dimmer);">{{ cat }}</span>
 {% endif %}

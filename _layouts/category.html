@@ -14,7 +14,7 @@ layout: default
 
 <div class="archive-list">
   {% if cat_posts.size == 0 %}
-    <p style="color:var(--meta);font-family:var(--sans);">No posts yet in this category — check back soon.</p>
+    <p style="color:var(--text-dimmer);">No posts yet in this category — check back soon.</p>
   {% else %}
     {% for post in cat_posts %}
     <div class="archive-item">

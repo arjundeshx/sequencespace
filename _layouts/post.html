@@ -62,7 +62,7 @@ layout: default
       {% for rpost in related %}
       <li>
         <a href="{{ rpost.url | prepend: site.baseurl }}">{{ rpost.title }}</a>
-        <br><small style="font-family:var(--mono);font-size:0.68rem;color:var(--meta);">{{ rpost.date | date: "%b %-d, %Y" }}</small>
+        <br><small style="font-family:var(--mono);font-size:0.68rem;color:var(--text-dimmer);">{{ rpost.date | date: "%b %-d, %Y" }}</small>
       </li>
       {% endfor %}
     </ul>

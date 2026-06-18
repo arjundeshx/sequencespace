@@ -1,14 +1,14 @@
-title: "SequenceSpace"
+title: "Sequence Space"
 tagline: "Computational biology — research, code, and commentary"
-description: "A semi-technical blog covering new research in computational biology, coding tutorials, and commentary on science and CompBio in the real world."
+description: "A semi-technical blog covering new research in computational biology, coding tutorials, and commentary on comp bio in society."
 author:
-  name: "Arjun Deshpande"
-  email: "arjundeshx@gmail.com"
-  instagram: "@arjun645728"
-  github: "@arjundeshx"
+  name: "Your Name"
+  email: "you@example.com"
+  twitter: "yourhandle"
+  github: "yourgithub"
 
-baseurl: "/sequencespace"  # Set to "/repo-name" if hosting at username.github.io/repo-name
-url: "https://arjundeshx.github.io"
+baseurl: ""  # Set to "/repo-name" if hosting at username.github.io/repo-name
+url: "https://yourusername.github.io"
 
 # Build
 markdown: kramdown
@@ -48,4 +48,3 @@ exclude:
   - Gemfile.lock
   - README.md
   - node_modules
-  - vendor
