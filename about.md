@@ -13,7 +13,7 @@ I'm a student studying computational biology: I'm particularly interested in str
 
 - **Research** — I break down interesting papers and findings, trying to make them accessible to someone with a biology *or* CS background (but not necessarily both).
 - **Tutorials** — Practical coding guides for comp bio tasks ranging from basic to more advanced.
-- **Commentary** — Slower, more opinionated writing about how the field relates to the world: ethics, policy, and impact.
+- **Commentary** — Slower, more opinionated writing about how the field relates to the world: ethics, policy, impact and my own experiences.
 
 ---
 
