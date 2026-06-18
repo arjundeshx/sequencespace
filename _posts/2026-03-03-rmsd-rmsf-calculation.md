@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "RMSD and RMSF Calculation with MDTraj and MDAnalysis"
+title: "Getting Started with MDTraj and MDAnalysis: Calculating RMSD and RMSF"
 date: 2026-03-03
 category: tutorial
 description: "A practical introduction to generating RMSD and RMSF plots from molecular dynamics trajectories and performing alignment in a memory-efficient manner using the MDTraj and MDAnalysis Python libraries."
