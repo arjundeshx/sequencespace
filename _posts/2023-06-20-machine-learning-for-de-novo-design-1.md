@@ -22,9 +22,9 @@ Olivecrona et. al's paper outlines three historical approaches to this problem:
 ## Olivecrona et. al's Approach
 Olivecrona et. al's work proposed a fourth approach: they used a recurrent neural network (RNN) for generation of molecules through SMILES strings, and fine tuned pre-trained RNNs using reinforcement learning motivated by similar work in other fields.
 
-## Background: SMILES, RNNs and Reinforcement Learning 
+## SMILES, RNNs and Reinforcement Learning 
 ## SMILES and Embedding Molecules
-**SMILES** (short for **s**implified **m**olecular **i**nput **l**ine **e**ntry **s**ystem) strings are a text-based representation of molecular structure; for example, the structure of tyrosine, pictured below, would be expressed with the formula **`N[C@@H](CC1=CC=C(O)C=C1)C(O)=O`** in canonical SMILES.
+**SMILES** (short for **s**implified **m**olecular **i**nput **l**ine **e**ntry **s**ystem) strings are a text-based representation of molecular structure; for example, the structure of tyrosine, pictured below, would be expressed with the text **`N[C@@H](CC1=CC=C(O)C=C1)C(O)=O`** in canonical SMILES.
 
 ![tyrosine_image]({{ '/assets/tyrosine.png' | prepend: site.baseurl }})
 
@@ -34,5 +34,16 @@ The paper employs a tokenization process on the model's vocabulary (SMILES strin
 
 Theese tokens were then one-hot encoded to embeddings (vectors with all zeros except for a 1 in the position corresponding to that token).
 
+The paper trained its model on **the RDKit canonical SMILES of 1.5 million structures from ChEMBL**; molecules are essentially graphs, and SMILES traverses them in a sequential way, so there are often many different valid ways to represent the same molecule using SMILES by traversing the molecular graph in a different order. This adds additional complexity to the task that the model has to learn (would require the model to learn that differing representations can mean the same thing) - to avoid this problem, a **canonicalization algorithm** is used, which produces a single, deterministic, text-based representation from one molecule called the **canonical SMILES**.
+
 ## Generating SMILES strings using RNNs
+RNNs are neural networks designed for sequences, and in this paper, they are used for next-token prediction given a SMILES string. Architectures like LSTMs and GRUs are typically used to avoid the exploding/vanishing gradient problem when working with RNNs (since backpropagation through time involves multiplying many gradient terms together); this paper uses GRUs for SMILES generation (3 layers, 1024 units each). An RNN can then be fed a start token **`GO`** and be used to generate a SMILES string, which ends when it predicts the next token to be the end-of-string **`EOS`** token.
+
+Training of the RNN is chieved through **maximum likelihood estimation** which aims to maximize the likelihood that the model assigns to the corect token when predicting a probability distribution over what the next character is likely to be.
+
+The RNN/GRU model produced by initial training is called the **Prior**. **94% of sequences produced by the Prior model in this study were valid molecular structures, and 90% of those were novel structures outside of the training set** demonstrating the capability of this method to predict novel molecular structures that remain valid. This means that the model has learned "chemical rules"; for example, it knows that once it opens an aromatic ring with a number, it "expects" to eventually close that ring with a matching number.
+
+## Reinforcement Learning
+
+
 
