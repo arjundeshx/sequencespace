@@ -44,6 +44,13 @@ Training of the RNN is chieved through **maximum likelihood estimation** which a
 The RNN/GRU model produced by initial training is called the **Prior**. **94% of sequences produced by the Prior model in this study were valid molecular structures, and 90% of those were novel structures outside of the training set** demonstrating the capability of this method to predict novel molecular structures that remain valid. This means that the model has learned "chemical rules"; for example, it knows that once it opens an aromatic ring with a number, it "expects" to eventually close that ring with a matching number.
 
 ## Reinforcement Learning
+Before we delve into how this paper uses RL, an overview of a few RL basics;
+* An agent in some state **`s`** chooses an action **`a`** according to a **policy** **`π(a|s)`** receiving a reward **`r`** based on its action and state.
+* The return **`G`** is the cumulative reward over an episode. The goal of RL is to learn a policy which maximizes the expected return.
+* A task with a clear end-point, such as SMILES string generation, which terminates when a **`EOS`** token is sampled, is called an **episodic task**.
 
+The authors chose to use policy-based RL because they wanted to learn *stochastic* policy, creating a diverse generative model that predicts a robust variety of compounds. The Prior (RNN) provided a pretrained policy that could be fine tuned, and episodes (the generation of one SMILES string) were short and easy to sample, reducing the downsides (high variance) that policy gradient methods usually suffer from.
+
+## Fine Tuning the Prior with Reinforcement Learning and "Augmented Likelihood"
 
 
