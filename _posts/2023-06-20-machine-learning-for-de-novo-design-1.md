@@ -20,3 +20,19 @@ Olivecrona et. al's paper outlines three historical approaches to this problem:
 * Inverse QSAR: QSAR (Quantitative Structure-Activity Relationship) normally predicts properties from a structure. Inverse QSAR attempts the reverse task, starting from a desired property and finding the structures that land there using a QSAR model; this can be difficult because you need a representation of molecules that works well *both* property prediction and translating back into a real structure.
 
 ## Olivecrona et. al's Approach
+Olivecrona et. al's work proposed a fourth approach: they used a recurrent neural network (RNN) for generation of molecules through SMILES strings, and fine tuned pre-trained RNNs using reinforcement learning motivated by similar work in other fields.
+
+## Background: SMILES, RNNs and Reinforcement Learning 
+## SMILES and Embedding Molecules
+**SMILES** (short for **s**implified **m**olecular **i**nput **l**ine **e**ntry **s**ystem) strings are a text-based representation of molecular structure; for example, the structure of tyrosine, pictured below, would be expressed with the formula **`N[C@@H](CC1=CC=C(O)C=C1)C(O)=O`** in canonical SMILES.
+
+![tyrosine_image]({{ '/assets/tyrosine.png' | prepend: site.baseurl }})
+
+Here, letters represent atoms, numbers mark ringopening and ring-closing bonds (the number 1 appears twice; once in a ring-opening bond, and once in the bond that closes tyrosine's aromatic ring) and parentheses denote branches off of the main chain.
+
+The paper employs a tokenization process on the model's vocabulary (SMILES strings from a large number of molecules from the ChEMBL database that comprise the model's training data); this produced **86 distinct tokens** where two-letter atoms (like Cl and Br) and bracketed groups (like nH, which represents an aromatic NH), count as one token.
+
+Theese tokens were then one-hot encoded to embeddings (vectors with all zeros except for a 1 in the position corresponding to that token).
+
+## Generating SMILES strings using RNNs
+
