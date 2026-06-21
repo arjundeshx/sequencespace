@@ -85,10 +85,11 @@ This means that the agent shoudl generte good scoring sequences but with similar
 The authors then extended this method to a different, non-binary goal: generating compounds similar to a reference drug, Celecoxib.
 
 ### Molecular Fingerprints and Tanimoto/Jaccard Similarity
-The authors compared molecules by converting them to **fingerprints** (binary vectors encoding the presence or absence of certain features e.g extended connectivity fingerprints/ECFPs or functional class fingerprints/FCFPs which you can read more about [here](https://medium.com/@musicalchemist/from-theory-to-code-a-deep-dive-into-molecular-extended-connectivity-fingerprints-ecfps-with-da1ed436925e). The Jaccard/Tanimoto similarity is then used to quantify the similarity between the two fingerprints.
+The authors compared molecules by converting them to **fingerprints** (binary vectors encoding the presence or absence of certain features e.g extended connectivity fingerprints/ECFPs or functional class fingerprints/FCFPs which you can read more about [here](https://medium.com/@musicalchemist/from-theory-to-code-a-deep-dive-into-molecular-extended-connectivity-fingerprints-ecfps-with-da1ed436925e)). The Jaccard/Tanimoto similarity is then used to quantify the similarity between the two fingerprints.
 
 ### Scoring Function
 The scoring function for this task was defined as:
+
 $$S(A) = -1 + 2 * min(J, k) / k$$
 
 Which rewards similarity up to some similarity threshold k, at which point it saturates (this defines how similar you want generated molecules to be to Celecoxib).
