@@ -90,7 +90,7 @@ The authors compared molecules by converting them to **fingerprints** (binary ve
 ### Scoring Function
 The scoring function for this task was defined as:
 
-$$S(A) = -1 + 2 * min(J, k) / k$$
+$$S(A) = -1 + 2 \cdot min(J, k) / k$$
 
 Which rewards similarity up to some similarity threshold k, at which point it saturates (this defines how similar you want generated molecules to be to Celecoxib).
 
