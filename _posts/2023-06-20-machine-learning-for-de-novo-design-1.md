@@ -103,6 +103,13 @@ This was fairly easy, since Celecoxib itself and its analogues are already in th
 Setting k=0.7 (lower than 1) was able to generate a diverse array of non-exact analogoues - this generation of similar compounds can be useful for actual drug discovery.
 
 ## Task 3: Generating Molecules That Are Active Against Dopamine Receptor DRD2
+The most complex, and most significant, task attempted by the paper was to generate novel molecules predicted to be activ against DRD2, dopamine receptor type 2, a real drug target relevant to psychiatric and neurological conditions such as schizophrenia which is treated with DRD2-antagonist antipsychotics.
+
+To generate a scoring function for this task, the authors had to build an activity classifier.
+To achieve this the authors:
+1. Obtained bioactivity data from ExCAPE-DB, finding 7,218 active compounds (with documented pIC50 > 5) and a much larger set of inactives.
+2. To generate a realistic train/test split and avoid "cheating" by testing on molecules that are extremely similar to analogues in the training data, they clustered the actives by structural similarity (Butina clustering on ECFP) and split **whole clusters** between train/validation/test so there were no analogous molecules between train vs. test sets (making test performance more reflective of the model's ability to generalize to never before seen compouds).
+3. Trained a SVM (support vector machine) classifier 
 
 
 
