@@ -75,4 +75,33 @@ The return is defined as the negative of the disagreement between the **agent's 
 
 $$G(A) = -\left[\log(P(A)_U) - \log(P(A)_{Agent})\right]^2$$
 
+The agent is trained to minimize a loss given parameters theta where:
+
+$$L(\Theta) = -G$$ 
+
+This means that the agent shoudl generte good scoring sequences but with similar frequency to what the augmented "ideal" distribution suggests, discouraging it from converging to one single trivial sequence, preserving both the diversity and chemical validity captured by the prior.
+
+## Task 2: Generating Analogous of Celecoxib
+The authors then extended this method to a different, non-binary goal: generating compounds similar to a reference drug, Celecoxib.
+
+### Molecular Fingerprints and Tanimoto/Jaccard Similarity
+The authors compared molecules by converting them to **fingerprints** (binary vectors encoding the presence or absence of certain features e.g extended connectivity fingerprints/ECFPs or functional class fingerprints/FCFPs which you can read more about [here](https://medium.com/@musicalchemist/from-theory-to-code-a-deep-dive-into-molecular-extended-connectivity-fingerprints-ecfps-with-da1ed436925e). The Jaccard/Tanimoto similarity is then used to quantify the similarity between the two fingerprints.
+
+### Scoring Function
+The scoring function for this task was defined as:
+$$S(A) = -1 + 2 * min(J, k) / k$$
+
+Which rewards similarity up to some similarity threshold k, at which point it saturates (this defines how similar you want generated molecules to be to Celecoxib).
+
+This scoring function is inputted into the standard augmented likelihood formula to compute returns as done in the previous sulfur elimination task. The authors trained the agent with k=1 (maximal similarity to Celecoxib) and the Agent was able to converge to generating Celecoxib itself exactly within ~200 steps.
+
+This was fairly easy, since Celecoxib itself and its analogues are already in the ChEMBL data used to train the prior. To test model robustness, the authors constructed a **reduced Prior** which is like a handicapped prior model that is trained on ChEMBL data with **all compounds similar to Celecoxib (Jaccard >0.5) removed from the dataset**. 
+
+**Remarkably, the Agent still rediscovers Celecoxib** even though it has never seen anything like it during pretraining. This result shows that RL fine-tuning can push models into new regions of the chemical space that were not just memorized from the training distribution: truly novel ligands can be generated to satisfy a target.
+
+Setting k=0.7 (lower than 1) was able to generate a diverse array of non-exact analogoues - this generation of similar compounds can be useful for actual drug discovery.
+
+## Task 3: Generating Molecules That Are Active Against Dopamine Receptor DRD2
+
+
 
