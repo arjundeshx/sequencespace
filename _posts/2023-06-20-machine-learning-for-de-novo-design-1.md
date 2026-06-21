@@ -28,7 +28,7 @@ Olivecrona et. al's work proposed a fourth approach: they used a recurrent neura
 
 ![tyrosine_image]({{ '/assets/tyrosine.png' | prepend: site.baseurl }})
 
-Here, letters represent atoms, numbers mark ringopening and ring-closing bonds (the number 1 appears twice; once in a ring-opening bond, and once in the bond that closes tyrosine's aromatic ring) and parentheses denote branches off of the main chain.
+Here, letters represent atoms, numbers mark ring-opening and ring-closing bonds (the number 1 appears twice; once in a ring-opening bond, and once in the bond that closes tyrosine's aromatic ring) and parentheses denote branches off of the main chain.
 
 The paper employs a tokenization process on the model's vocabulary (SMILES strings from a large number of molecules from the ChEMBL database that comprise the model's training data); this produced **86 distinct tokens** where two-letter atoms (like Cl and Br) and bracketed groups (like nH, which represents an aromatic NH), count as one token.
 
@@ -109,7 +109,42 @@ To generate a scoring function for this task, the authors had to build an activi
 To achieve this the authors:
 1. Obtained bioactivity data from ExCAPE-DB, finding 7,218 active compounds (with documented pIC50 > 5) and a much larger set of inactives.
 2. To generate a realistic train/test split and avoid "cheating" by testing on molecules that are extremely similar to analogues in the training data, they clustered the actives by structural similarity (Butina clustering on ECFP) and split **whole clusters** between train/validation/test so there were no analogous molecules between train vs. test sets (making test performance more reflective of the model's ability to generalize to never before seen compouds).
-3. Trained a SVM (support vector machine) classifier 
+3. Trained a SVM (support vector machine) classifier with a Gaussian kernel on the molecular fingerprints of actives and inactives in the dataset; this SVM achieved a high performance (AUC-ROC of ~0.98-1.0), and was used by the authors to determine if a newly generated molecule was active or inactive against DRD2 - this SVM was the scoring function in the augmented likelihood computation for this task.
+
+## Scoring Function
+The scoring function was as follows:
+
+$$S(A) = -1 + 2 * P_{active}$$
+
+Where $$P_{active}$$ is the SVM's predicted probability of activity (S(A) just centers this value within the range [-1, 1]). This means that the Agent is rewarded for geneating molecules that the classifier believes is active.
+
+This makes the augmented likelihood computation for this task as follows:
+
+$$\log(P(A)_U) = \log(P(A)_{Prior}) + \sigma * (-1 + 2 * P_{active})
+
+Where:
+
+$$G(A) = -\left[\log(P(A)_U) - \log(P(A)_{Agent})\right]^2$$
+
+and..
+
+$$L(\Theta) = -G$$
+
+as was the case for all of the tasks we have explored.
+
+Only 2-3% of generated molecules were predicted-active for the untrained prior, but this number **jumped to 95-97% after RL-based fine tuning**.
+
+They also tested a **reduced Prior** similar to what they did in task 2 (with all known DRD2 actives stripped from the training dataset to ensure that the model was generalizing and not memorizing structures from the training data), and the **Agent still achieved a ~96% predicted active rate** that were neither in the activity model nor the Prior's training data, demonstrating that it learned activity-relevant features that allowed it to generalize well. The Agent was even able to predict compounds that were actually experimentally confirmed to be active against DRD2.
+
+As is evident from the DRD2 task, this RL-guided RNN approach to SMILES generation has huge potential in drug discovery. Although these tasks were designed by the authors to be benchmarks to see if the model could achieve certain goals and generalize well beyond the compounds that it had already seen, the same "augmented likelihood" principle could be used with a variety of scoring functions to maximize a myriad of desirable properties. This goes back to the drug discovery problem that we discussed at the very beginning of this article: the approach could be used to maximize synthetic accesibility, DMPK properties, and bioactivity against a target (like DRD2) while maintaining the chemical validity learned by the Prior on a large corpus of chemical data.
+
+I hope this article was helpful in making what I thought was a pretty complex paper more digestible! Stay tuned for the second part to this series, which will explore latent-space based approaches to molecular generation, an exciting alternative to what we explored in this first part!
+
+
+
+
+
+
 
 
 
