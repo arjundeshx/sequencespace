@@ -52,5 +52,14 @@ Before we delve into how this paper uses RL, an overview of a few RL basics;
 The authors chose to use policy-based RL because they wanted to learn *stochastic* policy, creating a diverse generative model that predicts a robust variety of compounds. The Prior (RNN) provided a pretrained policy that could be fine tuned, and episodes (the generation of one SMILES string) were short and easy to sample, reducing the downsides (high variance) that policy gradient methods usually suffer from.
 
 ## Fine Tuning the Prior with Reinforcement Learning and "Augmented Likelihood"
+In this paper, the **agent** is essentially a copy of the **Prior** (which is an RNN pretrained via MLE on ChEMBL which has learned "chemical rules) that is fine tuned via RL to satisfy some desirable property (e.g "no sulfur", "similarity to another drug", "predicted bioactivity", "predicted binding affinity", etc.)
+
+The first task attempted by Olivecrona et. al was generating vali molecules without sulfur. They defined a scoring function **`S(A)`** that rates how desirable a complete episode is (e.g +1 if the generated molecule does not contain sulfur, -1 if it does). However, using naive [REINFORCE](https://www.geeksforgeeks.org/machine-learning/reinforce-algorithm/) the agent "cheats" and finds trivial solutions to this task, such as always outputting carbon (C); this satisfies the no sulfur condition, but is chemically nonsensical.
+
+To get around this problem, the authors defined **augmented likelihood**, a metric that combines the Prior's opinion of how "chemically sensible" a molecule is and the scoring function. The augmented likelihood, $$\log(P(A)_U)$$ is equated to $$\log(P(A)_Prior) + \sigma \cdot S(A)$$ where S(A) is the scoring function, $$\sigma$$ is a coefficient and $$\log(P(A)_prior)$$ is the **log probability that the original, frozen, Prior network assigns to generating exactly this sequence**. Since the RNN generates sequences token by token, the probability of a whole sequence is the product of the conditional probabilities of each token: $$P(A)_Prior = Π_t π_Prior(a_t | s_t)$$. Taking the log turns that product into a sum $$log P(A)_Prior = Σ_t log π_Prior(a_t | s_t)$$.
+
+The return is defined as the negative of the disagreement between the **agent's likelihood** for a sequence and the **augmented likelihood**: $$G(A) = -[\log(P(A)_U) - \log(P(A)_Agent)]^2$$
+
+
 
 
