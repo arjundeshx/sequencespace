@@ -9,9 +9,10 @@ author: Arjun Deshpande
 math: true
 ---
 
-This post will be the first of many (around 5-6 to be exact, I think) that will provide an overview of the recent developments in protein folding and de-novo protein generation. This post, the first of the series, will cover the earlier AlphaFold 1 model, an initial approach to tackling this problem that I have flavorfully chose to name "protein origami". When I first tried learning about how AlphaFold worked, it was super confusing! (and it was doubly confusing when I tried to tackle models like RFDiffusion), so hopefully this series of posts serves you well in demystifying this hugely important but rather dense area of research.
+This post will be the first of many (around 5-6 to be exact, I think) that will provide an overview of the recent developments in protein folding and de-novo protein generation. This post, the first of the series, will cover the earlier AlphaFold 1 model, an initial approach to tackling this problem that I have flavorfully chose to name "protein origami." When I first tried learning about how AlphaFold worked, it was super confusing! (and it was doubly confusing when I tried to tackle models like RFDiffusion), so hopefully this series of posts serves you well in demystifying this hugely important but rather dense area of research.
 
 So, the paper that I will break down in this post to provide a foundation for the rest of our exploration will be "Improved Protein Structure Prediction Using Potentials From Deep Learning" by Senior et. al (AlphaFold 1), which I have linked ["here"](https://nature.com/articles/s41586-019-1923-7).
+
 
 
 
