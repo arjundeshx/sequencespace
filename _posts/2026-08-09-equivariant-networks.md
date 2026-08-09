@@ -92,6 +92,8 @@ Here, the inverse transformation applied to y (which is the input position) to f
 
 To get a better picture of what's actually going on here, let's take the example of the group g = p4 (2D translations and 90 degree rotations). A group convolution equivariant to this group would not only pass a kernel over the entire image, it would pass a 90 degree rotated version, a 180 degree rotated version and a 210 degree rotated version as well. This would generate four 2D maps together in the group space. This stack of 2D maps is now equivariant to translation and 90 degree rotation! If the input is translated, the output on each of the four 2D maps will get translated as well (as in a vanilla CNN), but if we have a 90 degree rotation, all that happens is the four different 2D maps get re-labeled/cyclically shifted around the rotation channel (which has dimension length of 4 in this case). This way, if you were trying to detect an object in the image that was rotated 90 degrees, you would still have the same four feature maps (although in a different, equivariant order) as output, meaning that the model does not have to re-learn to account for rotation!
 
+The combination of different groups (like translation and rotation) is called a semi-direct product; the SE(2), standard euclidean group in 2D, is the semi-direct product of 2D translation and 2D rotation. SE(2) group convolutions are often referred to as "lifting layers" since they lift 2D inputs into 3D feature maps with a rotation dimension; these rotationally equivariant operations are useful in medical imaging tasks, where segmentation and classification targets are often rotated randomly.
+
 ## SE(3) Equivariant Architectures 
 
 
