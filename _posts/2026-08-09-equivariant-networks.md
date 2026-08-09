@@ -31,6 +31,8 @@ Group Convolutional Neural Networks (G-CNNs) are equivariant to a mathematically
 ### RC-CNNs
 DNA double helices also have symmetry because of complementarity of strands! Some models that deal with DNA data are this RC (reverse-complement) equivariant.
 
+Graph neural networks also often incorporate equivariance; this can be useful for models that deal with the chemical structures of drug molecules (often represented as graphs).
+
 Before we go into more complex topics like SE(3) equivariance and its applications in AlphaFold 2, let's first take a deeper look at the mathematical basis of equivariance in convolutions.
 
 ## Why are Convolutions Translationally Equivariant?
