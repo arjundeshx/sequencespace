@@ -17,6 +17,7 @@ Simple convolutions can be expressed mathematically as:
 
 $$[f * k](x) = \sum_{y \in \mathbb{Z}^2} \sum_{i=1}^{I} f_i(y)k_i(x-y)$$
 
+some more text here.
 
 ## General Group Convolutional Networks (G-CNNs)
 
