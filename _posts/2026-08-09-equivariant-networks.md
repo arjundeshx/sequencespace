@@ -96,6 +96,8 @@ The combination of different groups (like translation and rotation) is called a 
 
 While these 3D feature maps are rotation equivariant, in medical imaging tasks, the 3D maps are often compressed to 2D by applying a max pooling operation across the rotation dimension, $$\theta$$, which makes the final 2D map **rotation invariant** (which, for aforementioned reasons, can be a very helpful property).
 
+Note that these groups are currently discrete, and as you can imagine, the rotation dimension would increase indefinitely as we approach groups that define continuous transformations (i.e something like continuous rotation). Steerable CNNs (paper linked [here](https://arxiv.org/pdf/1612.08498)), developed by Taco Cohen and Max Welling, get around this problem and allow for continuous transformations, but that isn't something we'll discuss in too much depth here. Steerable CNNs allow us to be truly equivariant to continuous spaces like SE(2) without discretizing into small pieces or increasing computational cost for accuracy (discretized group convolutions are only exact for the transformations in the group; i.e p4 is only exact for 90 degree rotations, and p8 for 45 degree rotations, and so on, thus they only provide an approximate solution).
+
 ## SE(3) Equivariant Architectures 
 
 
