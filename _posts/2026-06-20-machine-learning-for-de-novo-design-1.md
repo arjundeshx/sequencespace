@@ -79,7 +79,7 @@ The agent is trained to minimize a loss given parameters theta where:
 
 $$L(\Theta) = -G$$ 
 
-This means that the agent shoudl generte good scoring sequences but with similar frequency to what the augmented "ideal" distribution suggests, discouraging it from converging to one single trivial sequence, preserving both the diversity and chemical validity captured by the prior.
+This means that the agent should generate good scoring sequences but with similar frequency to what the augmented "ideal" distribution suggests, discouraging it from converging to one single trivial sequence, preserving both the diversity and chemical validity captured by the prior.
 
 ## Task 2: Generating Analogous of Celecoxib
 The authors then extended this method to a different, non-binary goal: generating compounds similar to a reference drug, Celecoxib.
