@@ -94,6 +94,8 @@ To get a better picture of what's actually going on here, let's take the example
 
 The combination of different groups (like translation and rotation) is called a semi-direct product; the SE(2), standard euclidean group in 2D, is the semi-direct product of 2D translation and 2D rotation. SE(2) group convolutions are often referred to as "lifting layers" since they lift 2D inputs into 3D feature maps with a rotation dimension; these rotationally equivariant operations are useful in medical imaging tasks, where segmentation and classification targets are often rotated randomly.
 
+While these 3D feature maps are rotation equivariant, in medical imaging tasks, the 3D maps are often compressed to 2D by applying a max pooling operation across the rotation dimension, $$\theta$$, which makes the final 2D map **rotation invariant** (which, for aforementioned reasons, can be a very helpful property).
+
 ## SE(3) Equivariant Architectures 
 
 
