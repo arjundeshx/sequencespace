@@ -9,11 +9,29 @@ author: Arjun Deshpande
 math: true
 ---
 
-## What is Equivariance?
+## What is Equivariance, And Why is it so Important?
 
 Equivariance is when the output of a step or architecture changes by some operation by an equivalent amount when the input is altered by that same operation by an amount. For example, convolutions are translationally equivariant, because if an image is shifted over by some amount, then the result of the feature map is the same, except it is shifted over by an equivalent amount.
 
 Equivariance is NOT the same thing as invariance, however, which is when a transformation to the input produces NO (rather than equivariant) change in the output.
+
+Equivariant neural networks can be extremely helpful when we want to take advantage of **symmetries** in our data. For example, if we have an image classifier that is meant to identify images of animals, this property of translation equivariance possessed by convolutional neural networks might be helpful. For example, if a dog is in the top left corner of an image, versus if it is at the bottom right, it is still a dog, therefore we want the neural network to produce the same output with respect to translation symmetry (we might not want full invariance however, in case we want to localize what part of the image corresponds to the dog). In this case, a translationally equivariant architecture would generalize better and be more data efficient, as it would learn to recognize dogs translated from the positions that it encountered in its training dataset. 
+
+A similar effect can be achieved through the practice of data augmentation, which essentially causes a model to "learn equivariance" although it might not be built into the architecture; for example, CNNs are not rotationally equivariant, but passing in data with random rotation augmentations applied could cause the network to learn to be equivariant despite not being truly equivariant. Research has demonstrated however, that in many cases, models that are truly equivariant perform better, are more efficient and are better able to take advantage of symmetries than those that learn equivariance through extensive image augmentation.
+
+
+## An Overview of the Applications of Equivariant Neural Networks in Biology 
+
+### SE(3) Equivariance
+Equivariance to 3D rotations and translations (termed SE(3), or Special Euclidean 3, equivariance) are important to tools in structural biology; in fact, it was an SE(3) equivariant transformer architecture that was responsible for the huge improvement of AlphaFold 2 upon AlphaFold 1 and earlier iterations. 
+
+### G-CNNs
+Group Convolutional Neural Networks (G-CNNs) are equivariant to a mathematically defined group (G), which can include not only translations, but other geometric operations such as certain rotations and reflections. These G-CNNs have proved to be higher performing and more data efficient when applied to biomedical imaging and histopathology tasks. 
+
+### RC-CNNs
+DNA double helices also have symmetry because of complementarity of strands! Some models that deal with DNA data are this RC (reverse-complement) equivariant.
+
+Before we go into more complex topics like SE(3) equivariance and its applications in AlphaFold 2, let's first take a deeper look at the mathematical basis of equivariance in convolutions.
 
 ## Why are Convolutions Translationally Equivariant?
 
