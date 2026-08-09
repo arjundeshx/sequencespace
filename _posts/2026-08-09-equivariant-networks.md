@@ -20,7 +20,7 @@ Equivariant neural networks can be extremely helpful when we want to take advant
 A similar effect can be achieved through the practice of data augmentation, which essentially causes a model to "learn equivariance" although it might not be built into the architecture; for example, CNNs are not rotationally equivariant, but passing in data with random rotation augmentations applied could cause the network to learn to be equivariant despite not being truly equivariant. Research has demonstrated however, that in many cases, models that are truly equivariant perform better, are more efficient and are better able to take advantage of symmetries than those that learn equivariance through extensive image augmentation.
 
 ## Equivariance and Group Theory
-To understand equivariance, we need to understand the mathematical definition of a group: a group is a pair $$(G, \cdot)$$ of a set $$G$$ and a binary operator $$\cdot$$. The binary operator is a rule for combining two elements of the set G that yields another element of G, formally written as $$\therefore G \cross G \rightarrow G$$. The elements of G for our purposes represent transformations (like different translations, or rotations by different amounts), and the binary operator represents a way to compose those different transformations in succession.
+To understand equivariance, we need to understand the mathematical definition of a group: a group is a pair $$(G, \cdot)$$ of a set $$G$$ and a binary operator $$\cdot$$. The binary operator is a rule for combining two elements of the set G that yields another element of G, formally written as $$\therefore G \times G \rightarrow G$$. The elements of G for our purposes represent transformations (like different translations, or rotations by different amounts), and the binary operator represents a way to compose those different transformations in succession.
 
 Groups must obey four axioms:
 - Closure - output of composition/binary operator never leaves the group (always yields another element within the group)
@@ -80,7 +80,20 @@ $$[f' * k](x) = \sum_{y \in \mathbb{Z}^2} \sum_{i=1}^{I} f_i(y')k_i(x-y'-a)$$
 
 You might notice that this is actually the exact same thing as [f * k](x-a), and since $$T_a[f * k] = [f * k](x-a)$$ we establish that convolutions are translationally equivariant!
 
-## General Group Convolutional Networks (G-CNNs)
+## Group Convolutional Networks (G-CNNs)
 
+G-CNNs use a more general formula for any group, g, that corresponds to any set of transformations (instead of just having translations, represented by x (the output position, also how much the kernel is translated by) in our earlier basic CNN formula, we use g, which represents any group of transformations). For example, g could represent rotations (which are typically expressed in matrix form). Here, kernels are not only being translated but transformed by the actions in the group.
+
+This yields a more general group convolution formula that is equivariant to transformations belonging to the group g.
+
+$$[f * k](g) = \sum_{y \in \mathbb{Z}^2} \sum_i f_i(y)k_i(g^{-1}(y))
+
+Here, the inverse transformation applied to y (which is the input position) to find an offset analogous to x-y in the formula for the simple CNN. $$g^{-1}(y)$$ is really just asking, if I undo the transformation applied to the kernel on a pixel, where does the pixel line up relative to the kernel's own reference frame? Really weird to wrap your mind around, I know.
+
+To get a better picture of what's actually going on here, let's take the example of the group g = p4 (2D translations and 90 degree rotations). A group convolution equivariant to this group would not only pass a kernel over the entire image, it would pass a 90 degree rotated version, a 180 degree rotated version and a 210 degree rotated version as well. This would generate four 2D maps together in the group space. This stack of 2D maps is now equivariant to translation and 90 degree rotation! If the input is translated, the output on each of the four 2D maps will get translated as well (as in a vanilla CNN), but if we have a 90 degree rotation, all that happens is the four different 2D maps get re-labeled/cyclically shifted around the rotation channel (which has dimension length of 4 in this case). This way, if you were trying to detect an object in the image that was rotated 90 degrees, you would still have the same four feature maps (although in a different, equivariant order) as output, meaning that the model does not have to re-learn to account for rotation!
 
 ## SE(3) Equivariant Architectures 
+
+
+
+## SE(3) Equivariant Transformer and AlphaFold 2
