@@ -98,8 +98,12 @@ While these 3D feature maps are rotation equivariant, in medical imaging tasks, 
 
 Note that these groups are currently discrete, and as you can imagine, the rotation dimension would increase indefinitely as we approach groups that define continuous transformations (i.e something like continuous rotation). Steerable CNNs (paper linked [here](https://arxiv.org/pdf/1612.08498)), developed by Taco Cohen and Max Welling, get around this problem and allow for continuous transformations, but that isn't something we'll discuss in too much depth here. Steerable CNNs allow us to be truly equivariant to continuous spaces like SE(2) without discretizing into small pieces or increasing computational cost for accuracy (discretized group convolutions are only exact for the transformations in the group; i.e p4 is only exact for 90 degree rotations, and p8 for 45 degree rotations, and so on, thus they only provide an approximate solution).
 
-## SE(3) Equivariant Architectures 
+There is just so, so much more theory that goes into equivariant neural networks (including things like harmonic networks, 3D steerable CNNs, capsule networks, etc.), and I advise you to learn more about them if you're interested, I will provide some resources that I thought were interesting at the end of this blog post.
 
+Let's put the theory aside for now though, and approach the applications of equivariant neural networks in structural biology (namely, in AlphaFold 2) using the fundamental understanding of equivariance that we've just developed.
 
+## Equivariance in AF2
 
-## SE(3) Equivariant Transformer and AlphaFold 2
+## Equivariance in RFDiffusion
+
+## Additional Resources 
