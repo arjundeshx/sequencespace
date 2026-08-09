@@ -19,6 +19,21 @@ Equivariant neural networks can be extremely helpful when we want to take advant
 
 A similar effect can be achieved through the practice of data augmentation, which essentially causes a model to "learn equivariance" although it might not be built into the architecture; for example, CNNs are not rotationally equivariant, but passing in data with random rotation augmentations applied could cause the network to learn to be equivariant despite not being truly equivariant. Research has demonstrated however, that in many cases, models that are truly equivariant perform better, are more efficient and are better able to take advantage of symmetries than those that learn equivariance through extensive image augmentation.
 
+## Equivariance and Group Theory
+To understand equivariance, we need to understand the mathematical definition of a group: a group is a pair $$(G, \cdot)$$ of a set $$G$$ and a binary operator $$\cdot$$. The binary operator is a rule for combining two elements of the set G that yields another element of G, formally written as $$\therefore G \cross G \rightarrow G$$. The elements of G for our purposes represent transformations (like different translations, or rotations by different amounts), and the binary operator represents a way to compose those different transformations in succession.
+
+Groups must obey four axioms:
+- Closure - output of composition/binary operator never leaves the group (always yields another element within the group)
+- Associativity - operations are associative (order does not matter)
+- Identity - an identity element exists, keeping all elements inside the group (i.e an element exists that produces no change, such as a zero degree rotation or a translation by zero)
+- Inverse - every element of the group has an inverse element (if a 90 degree rotation exists in the group, so does a -90 degree rotation)
+
+We usually define neural networks as equivariant with respect to a certain symmetry group (for example, the group that contains all translations).
+Some useful shorthand for groups to know:
+- T: all 2D translations
+- p4: 90 degree rotations + translations in 2D
+- SO(3): Special Orthogonal Group in 3D (includes 3D rotations)
+- SE(3): Special Euclidean Group in 3D (includes 3D rotations + 3D translations)
 
 ## An Overview of the Applications of Equivariant Neural Networks in Biology 
 
