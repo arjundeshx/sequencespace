@@ -103,7 +103,23 @@ There is just so, so much more theory that goes into equivariant neural networks
 Let's put the theory aside for now though, and approach the applications of equivariant neural networks in structural biology (namely, in AlphaFold 2) using the fundamental understanding of equivariance that we've just developed.
 
 ## Equivariance in AF2
+Proteins do not have a single correct orientation (protein folding cares about the relative positions of atoms with respect to each other, not their absolute position). A protein can be globally rotated or translated in a coordinate system and yet be the same thing functionally - any model that predicts 3D protein structure must respect this invariance.
+
+AlphaFold2 achieves this by implementing a mechanism called **Invariant Point Attention (IPA)** in its structure module. IPA gives every residue its own local 3D reference frame, a position and orientation in space. Residues then attend to each other using geometric quantities like distance and relative orientations between these reference frames rather than raw coordinates. This makes the attention mechanism invariant to global rotation and translation, it also makes the coordinate updates the network produces SE(3) equivariant (they rotate and shift correctly with the frame). The advantage to this is that AlphaFold2 doesn't have to waste model capacity learning that proteins and their rotated/translated copies are equivalent, leaving more of the architecture to focus on patterns with real structural and chemical relevance.
 
 ## Equivariance in RFDiffusion
 
+RFDiffusion generates new protein structures using a diffusion model, denoising a random 3D structure until it arrives at a valid protein backbone. Its architecture too builds upon the same frame based mechanism used by AlphaFold2 and its counterpart RoseTTAFold.
+
+At every denoising step, the nework looks at a noisy 3D structure and predicts how to update that noisy structure so that it gets closer to a realistic protein backbone (as a diffusion model would). If the noisy structure is rotated, the predicted denoising or "cleanup" step should rotate correspondingly with it. If this wasn't the case, the model would need to treat every possible orientation of the exact same noisy structure distinctly, making each rotated and translated structure a totally distinct problem to solve. Without SE(3) equivariance, the denoiser would need to learn how to cleanup every rotated copy of every training example, as there is no way to know in advance which orientation a given noisy input will happen to be in.
+
+SE(3) equivariance allows the model to extrapolate the cleaning step from one noisy structure to all of its SE(3) equivalents, produced by applying rotations and translations, dramatically reducing the effective size of he learning problem and helping the model generalize really well from limited structural data to produce novel, sensible protein designs.
+
+So evidently, equivariance plays a huge role in machine learning methods for molecular and structural biology, and through our exploration of SE(3) equivariance in structure-based models (both for structure prediction, like AF2, and de-novo generation, like RFDiffusion), maybe you can start to see why. Equivariance is also hugely important to models dealing with molecules being represented as graphs, and de-novo generative models used for drug design (I came across equivariant neural networks recently when I was reading a paper on a diffusion model for the generation of PROTAC linkers!).
+
+It is impossible to cover all of the technical detail associated with equivariant neural networks in a single blog post (and all of the numerous applications in mol bio), but I will have future posts that do a deep dive into models like RFDiffusion, RoseTTAFold and the different iterations of AlphaFold. For now, however, I would like to recommend a few resources that I found helpful.
+
 ## Additional Resources 
+- [DeepFindr's video series on equivariant neural networks](https://www.youtube.com/watch?v=2bP_KuBrXSc&t=1s) (DeepFindr in general is super awesome for learning machine learning stuff - he's helped me out a ton)
+- Relevant chapters from [Deep Learning for Molecules and Materials](https://dmol.pub/index.html)
+
